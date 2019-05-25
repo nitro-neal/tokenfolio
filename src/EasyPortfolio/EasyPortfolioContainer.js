@@ -1,9 +1,11 @@
 import React, { Fragment } from "react";
-import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation } from "mdbreact";
+import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBInput } from "mdbreact";
 import MyLogo from "./MyLogo";
 import ShowPieChart from "./PieChart";
 import AssetSlider from "./AssetSlider";
 import ButtonPage from "./ButtonPage";
+import MyInput from "./MyInput";
+import SelectPage from "./SelectPage";
 
 var DEBUG = true;
 
@@ -73,9 +75,18 @@ class EasyPortfolioContainer extends React.Component {
                     <MDBCol className = "col-example" md="7">
                         <MDBAnimation type="slideInRight">
 
+                            
+
                             <MDBRow className = "h-100 align-items-center">
                                 <MDBCol>
                                     <ShowPieChart assets = {this.state.assets}/>
+                                </MDBCol>
+                            </MDBRow>
+
+                            <MDBRow className = "h-100 align-items-center">
+                                <MDBCol>
+                                    <MyInput/>
+                                    {/* <SelectPage/> */}
                                 </MDBCol>
                             </MDBRow>
 
