@@ -59,7 +59,7 @@ class AssetSlider extends React.Component {
             var computedValue = asset.newPortfolioPercent;
 
             items.push(
-                
+                <MDBAnimation type="slideInRight">
                 <div key = {asset.symbol}>
                 
                     <MDBContainer>
@@ -84,6 +84,7 @@ class AssetSlider extends React.Component {
                     <Slider trackStyle = {colorMap.get(asset.symbol)} handleStyle={colorMap.get(asset.symbol)} railStyle = {myStyle} min={0} max={100} defaultValue={5} value = {computedValue} onChange={(e) => this.props.changeSlider(asset,e)} />
                 </div>
                 </div>
+                </MDBAnimation>
                 
             )
         })

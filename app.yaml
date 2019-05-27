@@ -11,7 +11,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+runtime: nodejs
+env: flex
+
 # [START gae_quickstart_yaml]
-runtime: nodejs10
-service: default
+#runtime: nodejs10
+#service: default
 # [END gae_quickstart_yaml]

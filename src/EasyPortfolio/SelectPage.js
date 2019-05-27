@@ -1,44 +1,32 @@
-// import React, { Component } from "react";
+import React, { Component } from "react";
 // import { MDBSelect } from "mdbreact";
 
-// class SelectPage extends Component {
-//   state = {
-//     options: [
-//       {
-//         text: "USA",
-//         value: "1"
-//       },
-//       {
-//         text: "Germany",
-//         value: "2"
-//       },
-//       {
-//         text: "France",
-//         value: "3"
-//       },
-//       {
-//         text: "Poland",
-//         value: "4"
-//       },
-//       {
-//         text: "Japan",
-//         value: "5"
-//       }
-//     ]
-//   };
+class SelectPage extends Component {
 
-//   render() {
-//     return (
-//       <div>
-//         <MDBSelect
-//           search
-//           options={this.state.options}
-//           selected="Choose your option"
-//           label="Example label"
-//         />
-//       </div>
-//     );
-//   }
-// }
+  render () {
 
-// export default SelectPage;
+    if(this.props.availTokens === []) {return;}
+
+    var sortedAssets = this.props.availTokens.sort();
+    console.log(sortedAssets)
+
+        var items = []
+        var counter = 1;
+        sortedAssets.forEach((asset) => {
+            items.push(
+                <option value={asset}>{asset}</option>
+            )
+        })
+
+    return(
+    <div style = {{'marginLeft': '15%', 'marginRight' :'15%', 'paddingBottom' :'25px'}}>
+        <select onChange= {this.props.handleSelect} className="browser-default custom-select">
+          <option>Add a cryptocurrency to your portfolio</option>
+            {items}
+        </select>
+      </div>
+    );
+  }
+}
+
+export default SelectPage;
