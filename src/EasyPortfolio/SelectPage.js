@@ -8,13 +8,13 @@ class SelectPage extends Component {
     if(this.props.availTokens === []) {return;}
 
     var sortedAssets = this.props.availTokens.sort();
-    console.log(sortedAssets)
+    
 
         var items = []
-        var counter = 1;
+        
         sortedAssets.forEach((asset) => {
             items.push(
-                <option value={asset}>{asset}</option>
+                <option key = {asset} value={asset}>{asset}</option>
             )
         })
 

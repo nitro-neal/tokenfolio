@@ -52,25 +52,28 @@ class AssetSlider extends React.Component {
         })
 
 
-        console.log(sortedAssets)
+        // console.log(sortedAssets)
 
         var items = []
         sortedAssets.forEach((asset) => {
             var computedValue = asset.newPortfolioPercent;
 
             items.push(
-                <MDBAnimation type="slideInRight">
+                <MDBContainer>
+                <MDBAnimation key = {asset.symbol} type="slideInRight">
                 <div key = {asset.symbol}>
                 
-                    <MDBContainer>
+                    
                         <MDBRow>
-                        <MDBCol sm={"1"}> <img alt ="" style ={imageStyle} src={"./logos/" + asset.symbol.toLowerCase() + ".png"}/> </MDBCol>
-                            <MDBCol sm={"8"}> <p style = {textAlignLeft} className="herotext"> {asset.tokenName}  ({asset.symbol}) </p></MDBCol>
-                            <MDBCol sm={"3"}> <p style = {textAlignRight}  className="herotext">   {Math.round(asset.newPortfolioPercent)} % </p></MDBCol>
+                        <MDBCol size={"1"}> <img alt ="" style ={imageStyle} src={"./logos/" + asset.symbol.toLowerCase() + ".png"}/> </MDBCol>
+                            <MDBCol size={"8"}> <p style = {textAlignLeft} className="herotext"> {asset.tokenName}  ({asset.symbol}) </p></MDBCol>
+                            <MDBCol size={"3"}> <p style = {textAlignRight}  className="herotext">   {Math.round(asset.newPortfolioPercent)} % </p></MDBCol>
                         </MDBRow>
-                    </MDBContainer>
+                
                 
 
+                        <MDBRow>
+                        <MDBCol>
                 <div key={asset.symbol} style={wrapperStyle}>
                     {/* {asset.symbol} => {Math.round(asset.newPortfolioPercent)} */}
                     {/* <p>{asset.tokenName}</p> */}
@@ -83,8 +86,11 @@ class AssetSlider extends React.Component {
                     {/* <p class="herotext"> <img alt ="" style ={imageStyle} src={"./logos/" + asset.symbol.toLowerCase() + ".png"}/> <span class={textAlignLeft}> {asset.tokenName}  ({asset.symbol}) </span> <span style ={textAlignRight} > {Math.round(asset.newPortfolioPercent)} </span> </p> */}
                     <Slider trackStyle = {colorMap.get(asset.symbol)} handleStyle={colorMap.get(asset.symbol)} railStyle = {myStyle} min={0} max={100} defaultValue={5} value = {computedValue} onChange={(e) => this.props.changeSlider(asset,e)} />
                 </div>
+                </MDBCol>
+                </MDBRow>
                 </div>
                 </MDBAnimation>
+                </MDBContainer>
                 
             )
         })

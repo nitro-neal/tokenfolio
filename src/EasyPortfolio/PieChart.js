@@ -7,19 +7,26 @@ class ShowPieChart extends React.Component {
 
   colorMap = new Map();
   
-  componentDidMount() {
+  // componentDidMount() {
+  //   this.colorMap.set('BTC', 'orange');
+  //   this.colorMap.set('WBTC', 'orange');
+  //   this.colorMap.set('ETH', 'grey');
+  //   this.colorMap.set('BAT', 'red');
+  //   this.colorMap.set('DAI', 'yellow');
+  //   this.colorMap.set('OMG','blue');
+  // }
+
+  render() {
+
     this.colorMap.set('BTC', 'orange');
     this.colorMap.set('WBTC', 'orange');
     this.colorMap.set('ETH', 'grey');
     this.colorMap.set('BAT', 'red');
     this.colorMap.set('DAI', 'yellow');
     this.colorMap.set('OMG','blue');
-  }
-
-  render() {
     
-    console.log('ASSETS: ')
-    console.log(this.props.assets);
+    // console.log('ASSETS: ')
+    // console.log(this.props.assets);
     
     var colors = []
     var assets = this.props.assets

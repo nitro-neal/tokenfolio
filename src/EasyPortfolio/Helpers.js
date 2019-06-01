@@ -97,8 +97,7 @@ function newExecuteBatch(ethAddressArray, globalWeb3, tokenPriceInfo, minABI, th
 
     // globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000', 'latest')
 
-    console.log("PROB NOT BAL..")
-    console.log(globalWeb3.eth.getBalance("0x407d73d8a49eeb85d32cf465507dd71d507100c1"));
+    
 
 
     // var ethBalance = parseFloat(drizzle.web3.utils.fromWei(balance, 'ether'));
