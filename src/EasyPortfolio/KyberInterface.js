@@ -241,10 +241,11 @@ async function myBatchSendTranscation(rawTxs, trades, myWeb3) {
     // .on('error', console.error) // If a out of gas error, the second parameter is the receipt.
     // )
 
-    console.log('yea not working?')
-    console.log(trades[i].from + "->" + trades[i].to)
-
     var theTrade = trades[i].from + "->" + trades[i].to;
+    console.log('trade executing')
+    console.log(theTrade)
+
+    
 
     // batch.add(myWeb3.eth.sendTransaction(rawTxs[i])
     // .on('transactionHash', (hash) => txToCompleteCallback("transactionHash", hash, theTrade))

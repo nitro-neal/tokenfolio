@@ -5,7 +5,7 @@ import React from 'react';
 import Slider from 'rc-slider';
 
 // import {Container, Row, Col} from 'react-bootstrap';
-import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation } from "mdbreact";
+import {MDBContainer, MDBRow, MDBCol, MDBAnimation } from "mdbreact";
 
 
 const wrapperStyle = { marginLeft: '15%', marginRight :'15%' };
@@ -59,14 +59,14 @@ class AssetSlider extends React.Component {
             var computedValue = asset.newPortfolioPercent;
 
             items.push(
-                <MDBContainer>
+                <MDBContainer key ={asset.symbol}>
                 <MDBAnimation key = {asset.symbol} type="slideInRight">
                 <div key = {asset.symbol}>
                 
                     
                         <MDBRow>
-                        <MDBCol size={"1"}> <img alt ="" style ={imageStyle} src={"./logos/" + asset.symbol.toLowerCase() + ".png"}/> </MDBCol>
-                            <MDBCol size={"8"}> <p style = {textAlignLeft} className="herotext"> {asset.tokenName}  ({asset.symbol}) </p></MDBCol>
+                        <MDBCol size={"2"}> <img alt ="" style ={imageStyle} src={"./logos/" + asset.symbol.toLowerCase() + ".png"}/> </MDBCol>
+                            <MDBCol size={"7"}> <p style = {textAlignLeft} className="herotext"> {asset.tokenName}  ({asset.symbol}) </p></MDBCol>
                             <MDBCol size={"3"}> <p style = {textAlignRight}  className="herotext">   {Math.round(asset.newPortfolioPercent)} % </p></MDBCol>
                         </MDBRow>
                 
@@ -98,7 +98,7 @@ class AssetSlider extends React.Component {
 
         return (
 
-            <div className = "container4">
+            <div>
                 {items}
             </div>
         );

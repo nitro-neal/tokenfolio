@@ -49,6 +49,10 @@ export function computeTrades(stateAssets) {
                 console.log('DOING MATH')
                 console.log((trade.amount * assets[i].pricePerAsset))
                 console.log((trade.amount * assets[i].pricePerAsset) / assets[j].pricePerAsset)
+
+                console.log('price per asset..')
+                console.log(assets[j].pricePerAsset)
+
                 trade.otherTokenRecieveAmount = (trade.amount * assets[i].pricePerAsset) / assets[j].pricePerAsset;
                 trades.push(trade)
             }
