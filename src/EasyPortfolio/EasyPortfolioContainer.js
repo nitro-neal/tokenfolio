@@ -184,9 +184,10 @@ class EasyPortfolioContainer extends React.Component {
         var tc = this.state.tradeConfirmations;
 
         if(type === "transactionHash") {
-            tc.set(trade,"tx")
+            tc.set(trade,"tx-" + data)
         } else if (type === "confirmation") {
-            tc.set(trade,"comf")
+            var hash = tc.get(trade).split('-')[1]
+            tc.set(trade,"comf-"+hash)
         }
         
         this.setState({tradeConfirmations:tc})
