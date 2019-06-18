@@ -50,6 +50,7 @@ class MyModal extends React.Component {
 
                     {this.props.tradeConfirmations.get(approval + "-approval") === "comf" ?
                     
+                    
                     <Animation type="pulse" infinite>
                         <svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
                     </Animation>
@@ -73,7 +74,7 @@ class MyModal extends React.Component {
                     </MDBCol>
                     <MDBCol size={"3"}> <img alt ="" style ={imageStyle} src={"./logos/" + trade.to.toLowerCase() + ".png"}/> </MDBCol>
                     {/* <MDBCol sm={"6"}> <a href="https://ropsten.etherscan.io/tx/0x6dbcb6eaca690eef54d08733fede54f21baf125400ed8ee08af71a8c5605c0ed"> > </a> </MDBCol> */}
-                    <MDBCol size={"5"}>
+                    <MDBCol size={"4"}>
 
                     {this.props.tradeConfirmations.get(trade.from + "->" +trade.to) === undefined ?
                     <Animation type="pulse" infinite>
@@ -101,6 +102,11 @@ class MyModal extends React.Component {
                     }
 
                 </MDBCol>
+
+                <MDBCol size={"1"}>
+                    <a href = "google.com" ><MDBIcon icon="external-link-square-alt" /></a>
+                </MDBCol>
+                
                 </MDBRow>
                 </MDBAnimation>
             );

@@ -1,5 +1,5 @@
 import React from "react";
-import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert } from "mdbreact";
+import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert, Animation } from "mdbreact";
 import ShowPieChart from "./PieChart";
 import AssetSlider from "./AssetSlider";
 import {getCurrentAssets, computeTrades} from "./Helpers"
@@ -25,6 +25,7 @@ async function fetchPriceInfo() {
 
 
 async function init(that) {
+
     try {
         var ethAccounts = await web3.eth.requestAccounts(); 
 
@@ -55,7 +56,10 @@ class EasyPortfolioContainer extends React.Component {
         currentTrades: [],
         currentApprovals: [],
         tradeConfirmations : new Map(),
-        message : ""
+        message : "",
+        trading : false,
+        totalPercentage : 100.0,
+        totalUsdValue: 0.0
       }
     }
 
@@ -116,6 +120,13 @@ class EasyPortfolioContainer extends React.Component {
         asset.newPercentUsdValue = totalUsdValue * (asset.newPortfolioPercent * .01)
         // this is needed, but not sure why..
         this.setState({ assets: this.state.assets });
+
+        if(totalPercentage >= 100) {
+            totalPercentage = 100
+        }
+
+        this.setState({totalUsdValue: totalUsdValue})
+        this.setState({totalPercentage:totalPercentage})
     }
 
     addAsset(asset) {
@@ -123,6 +134,12 @@ class EasyPortfolioContainer extends React.Component {
     }
 
     handleSelect = e => {
+        for(var i = 0; i < this.state.assets.length; i ++) {
+            if(this.state.assets[i].symbol === e.target.value) {
+                return;
+            }
+        }
+
         var token = "ETH_" + e.target.value;
         var asset =  {"symbol" : e.target.value, "tokenAddress" :  globalTokenPriceInfo[token].token_address, "amount" : 0, "pricePerAsset":globalTokenPriceInfo[token].rate_usd_now, "usdValue": 0, "newPercentUsdValue": 0, "currentPortfolioPercent" : 0, "newPortfolioPercent" : 0}
         this.addAsset(asset)
@@ -148,6 +165,8 @@ class EasyPortfolioContainer extends React.Component {
 
     startKyberTrade = () => {
         this.toggle();
+        this.setState({trading:true})
+
         var trades = computeTrades(this.state.assets);
         this.setState({currentTrades:trades})
 
@@ -155,12 +174,6 @@ class EasyPortfolioContainer extends React.Component {
         console.log(trades)
         startTrade(web3, trades, GAS_PRICE, this.txToCompleteCallback, this.approvalsCallback);
       }
-
-
-    // tradeCompleteCallback = hash => {
-    //     console.log('TRADE COMPLETE IN CALLBACK');
-    //     console.log(hash);
-    // }
 
     txToCompleteCallback = (type, data, trade) => {
 
@@ -188,11 +201,27 @@ class EasyPortfolioContainer extends React.Component {
     
     render() {
         
+        var textAlignCenter = {"textAlign" :"center" }
+        var buttonToRender;
+
         if(this.state.ready === false) {
             return <LoadingPage/>
         }
 
+        if(this.state.trading) {
+            buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.toggle} color="primary"><Animation type="pulse" infinite>Balancing in progress...</Animation></MDBBtn>
+
+        } else {
+            if(this.state.totalPercentage >= 99.99) {
+                buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="primary">Rebalance</MDBBtn>
+
+            } else {
+                buttonToRender = <MDBBtn data-toggle="modal" disabled data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="primary">Rebalance</MDBBtn>
+            }
+        }
+
         return (
+            
             <MDBContainer className = "h-100">
             
                 <MyModal currentApprovals={this.state.currentApprovals} modal={this.state.modal} toggle={this.toggle} tradeConfirmations={this.state.tradeConfirmations} currentTrades={this.state.currentTrades}/>
@@ -220,7 +249,9 @@ class EasyPortfolioContainer extends React.Component {
 
                             <MDBRow className = "h-100 align-items-center">
                                 <MDBCol>
+                                    
                                     <ShowPieChart assets = {this.state.assets}/>
+                                    <p style = {textAlignCenter} >USD Value: ${Math.round(this.state.totalUsdValue * 100) / 100}</p>
                                 </MDBCol>
                             </MDBRow>
 
@@ -232,13 +263,13 @@ class EasyPortfolioContainer extends React.Component {
 
                             <MDBRow className = "h-100 align-items-center">
                                 <MDBCol>
-                                    <AssetSlider changeSlider = {this.changeSlider} assets = {this.state.assets} />
+                                    <AssetSlider totalUsdValue = {this.state.totalUsdValue} totalPercentage={this.state.totalPercentage} changeSlider = {this.changeSlider} assets = {this.state.assets} />
                                 </MDBCol>
                             </MDBRow>
 
                             <MDBRow className = "h-100 align-items-center">
                                 <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
-                                    <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="primary">Rebalance</MDBBtn>
+                                    {buttonToRender}
                                 </MDBCol>
                             </MDBRow>
                         </MDBAnimation>

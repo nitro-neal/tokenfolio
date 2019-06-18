@@ -57,6 +57,7 @@ class ShowPieChart extends React.Component {
     return (
       
 
+      
                                 
         <Chart
           // width={'200px'}
@@ -67,6 +68,7 @@ class ShowPieChart extends React.Component {
           
           options={{
               // backgroundColor:'#333',
+              //title: 'USD Value: $233',
               backgroundColor: { fill:'transparent' },
               legend: 'none',
               pieHole: 0.7,
@@ -87,6 +89,7 @@ class ShowPieChart extends React.Component {
           }}
           rootProps={{ 'data-testid': '1' }}
           />
+          
     )
   }
 }
