@@ -5,7 +5,7 @@ import React from 'react';
 import Slider from 'rc-slider';
 
 // import {Container, Row, Col} from 'react-bootstrap';
-import {MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBIcon } from "mdbreact";
+import {MDBContainer, MDBRow, MDBCol, MDBAnimation } from "mdbreact";
 
 
 const wrapperStyle = { marginLeft: '15%', marginRight :'15%' };

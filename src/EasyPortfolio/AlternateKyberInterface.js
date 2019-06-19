@@ -1,5 +1,3 @@
-import { func } from "prop-types";
-
 // const NETWORK_URL = "https://ropsten-api.kyber.network"
 // const NETWORK_URL = "https://api.kyber.network";
 var NETWORK_URL = "";
@@ -39,9 +37,6 @@ async function startSimpleKyberTrade(myWeb3, trades, ethAccount, txToCompleteCal
           if(rawTxs.length === trades.length + addedTxs) {
     
             console.log('READY TO SEND BATCH')
-            // myBatchSendTranscation(rawTxs, approvals, trades, myWeb3, txToCompleteCallback);
-            // callWeb3SendTransaction(myWeb3, rawTxs, 0)
-            // myNewWay(myWeb3, rawTxs, approvals, trades, txToCompleteCallback)
             justInOrder(myWeb3, rawTxs, approvals, trades, txToCompleteCallback)
           }
         });
@@ -101,16 +96,6 @@ async function justInOrder(myWeb3, rawTxs, approvals, trades, txToCompleteCallba
     }
 
 }
-
-
-function doSendTransaction(myWeb3, tx, theTrade, txToCompleteCallback) {
-    myWeb3.eth.sendTransaction(tx)
-            // .once('transactionHash', function(hash){ console.log("HASH " + hash)})
-            // .once('confirmation', function(confNumber, receipt){ console.log("COMF " + confNumber)})
-            .once('transactionHash', (hash) => txToCompleteCallback('transactionHash', hash, theTrade))
-            .once('confirmation', (confNumber, receipt) => txToCompleteCallback('confirmation', confNumber, theTrade))
-}
-
 
 function doSendTransactionWithPromise(myWeb3, tx, theTrade, txToCompleteCallback, myResolve) {
     myWeb3.eth.sendTransaction(tx)

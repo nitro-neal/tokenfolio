@@ -309,6 +309,8 @@ class EasyPortfolioContainer extends React.Component {
                             <div className = "logo">
                                 {/* cryptofolio */}
                                 <a href = {"/"} >Tokenfolio </a>
+                                {/* <a href = {"/"} ><img alt="tokenfolio" src="./tokenfolio-logo.png" ></img> </a> */}
+                                
                             </div>
                         </MDBCol>
                     </MDBAnimation>

@@ -1,6 +1,5 @@
 import React from "react";
 
-// https://codepen.io/anon/pen/KjgrmE
 class ToggleSwitch extends React.Component {
 	constructor(props) {
 		super(props);

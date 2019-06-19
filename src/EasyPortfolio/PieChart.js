@@ -1,21 +1,10 @@
 import React from 'react';
 import Chart from "react-google-charts";
-//import {Container, Row, Col} from 'react-bootstrap';
-import { MDBContainer, MDBRow, MDBCol } from "mdbreact";
 
 class ShowPieChart extends React.Component {
 
   colorMap = new Map();
   
-  // componentDidMount() {
-  //   this.colorMap.set('BTC', 'orange');
-  //   this.colorMap.set('WBTC', 'orange');
-  //   this.colorMap.set('ETH', 'grey');
-  //   this.colorMap.set('BAT', 'red');
-  //   this.colorMap.set('DAI', 'yellow');
-  //   this.colorMap.set('OMG','blue');
-  // }
-
   render() {
 
     this.colorMap.set('BTC', 'orange');
