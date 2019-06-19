@@ -1,6 +1,6 @@
 
 import React from "react";
-import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert, Animation } from "mdbreact";
+import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert, Animation, MDBIcon } from "mdbreact";
 import ShowPieChart from "./PieChart";
 import AssetSlider from "./AssetSlider";
 import {getCurrentAssets, computeTrades} from "./Helpers"
@@ -10,10 +10,10 @@ import SelectPage from "./SelectPage";
 import LoadingPage from "./LoadingPage";
 import MyModal from "./MyModal";
 import ToggleSwitch from "./ToggleSwitch";
+import NoWebThree from "./NoWebThree";
 
-//switch style
+
 var NETWORK_URL = "";
-
 // const NETWORK_URL = "https://ropsten-api.kyber.network"
 // const NETWORK_URL = "https://api.kyber.network";
 
@@ -67,7 +67,7 @@ class EasyPortfolioContainer extends React.Component {
         message : "",
         trading : false,
         totalPercentage : 100.0,
-        totalUsdValue: 0.0,
+        totalUsdValue: -1.0,
         isChecked: true
       }
     }
@@ -77,7 +77,7 @@ class EasyPortfolioContainer extends React.Component {
         // window.sessionStorage.setItem("mykey", "mainnet");
 
         const network = window.sessionStorage.getItem("network");
-        console.log('NETWORK')
+        console.log('Current Network')
         console.log(network)
         if (network && network === "testnet") {
             this.setState({isChecked:false})
@@ -94,7 +94,7 @@ class EasyPortfolioContainer extends React.Component {
             this.addTestAssets();
         } else if (web3 === undefined || web3.givenProvider === null) {
             this.setState({ready:true})
-            this.setState({message:"web3 not connected"})
+            this.setState({message:"noweb3"})
         } else {
             init(this)   
         }
@@ -194,10 +194,17 @@ class EasyPortfolioContainer extends React.Component {
     }
 
     startKyberTrade = () => {
+        
+
+        var trades = computeTrades(this.state.assets);
+
+        if(trades.length ===0) {
+            return;
+        }
+
         this.toggle();
         this.setState({trading:true})
 
-        var trades = computeTrades(this.state.assets);
         this.setState({currentTrades:trades})
 
         console.log('Performing trades: ');
@@ -241,8 +248,8 @@ class EasyPortfolioContainer extends React.Component {
         }
 
         this.refreshPage();
-        // handleChange
     }
+
     render() {
         
         var textAlignCenter = {"textAlign" :"center" }
@@ -250,6 +257,10 @@ class EasyPortfolioContainer extends React.Component {
 
         if(this.state.ready === false) {
             return <LoadingPage/>
+        }
+
+        if(this.state.message === "noweb3") {
+            return <NoWebThree/>
         }
 
         if(this.state.trading) {
@@ -278,6 +289,19 @@ class EasyPortfolioContainer extends React.Component {
                     {this.state.message}
                 </MDBAlert>
                 }
+
+                {this.state.totalUsdValue === 0 ?
+                <MDBAlert color="success">
+                <MDBRow className = "h-100 align-items-center">
+                <MDBCol style={textAlignCenter}>
+                    <h1>Don't be a filty nocoiner!</h1>
+                    <a rel="noopener noreferrer" target= "_blank" href = "https://www.coinbase.com"> <h2>Buy Ethereum <MDBIcon icon="space-shuttle" /> </h2>  </a>
+                    </MDBCol>
+                    </MDBRow>
+                </MDBAlert>
+                :
+                ""
+                } 
 
                 <MDBRow className = "h-100 align-items-center">
                     <MDBAnimation type="slideInLeft">

@@ -79,12 +79,7 @@ class ShowPieChart extends React.Component {
                 2: { color: colors[2] },
                 3: { color: colors[3] },
                 4: { color: colors[4] },
-                5: { color: colors[5] },
-                6: { color: colors[6] },
-                7: { color: colors[7] },
-                8: { color: colors[8] },
-                9: { color: colors[9] },
-                10: { color: colors[10] }
+                5: { color: colors[5] }
               }
           }}
           rootProps={{ 'data-testid': '1' }}

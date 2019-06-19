@@ -21,8 +21,6 @@ class ToggleSwitch extends React.Component {
 	}
     
     componentDidMount() {
-        console.log('parentchecked')
-        console.log(this.props.checked)
         var parentChecked = this.props.checked;
         this.setState({checked:parentChecked})
     }

@@ -87,7 +87,7 @@ class MyModal extends React.Component {
                     </MDBCol>
                     <MDBCol size={"3"}> <img alt ="" style ={imageStyle} src={"./logos/" + trade.to.toLowerCase() + ".png"}/> </MDBCol>
                     {/* <MDBCol sm={"6"}> <a href="https://ropsten.etherscan.io/tx/0x6dbcb6eaca690eef54d08733fede54f21baf125400ed8ee08af71a8c5605c0ed"> > </a> </MDBCol> */}
-                    <MDBCol size={"4"}>
+                    <MDBCol size={"3"}>
 
                     {this.props.tradeConfirmations.get(trade.from + "->" +trade.to) === undefined ?
                     <Animation type="pulse" infinite>
@@ -97,8 +97,6 @@ class MyModal extends React.Component {
                     ""
                     } 
 
-                    {console.log("TX VALUE")}
-                    {console.log(this.props.tradeConfirmations.get(trade.from + "->" +trade.to))}
                     {this.props.tradeConfirmations.get(trade.from + "->" +trade.to) !== undefined && this.props.tradeConfirmations.get(trade.from + "->" +trade.to).split('-')[0] === "tx" ?
                     <div key = {trade.from + "-" + trade.to} className="spinner-border text-primary" role="status">
                         <span className="sr-only">Loading...</span>
@@ -167,7 +165,7 @@ class MyModal extends React.Component {
                             {currentTxs}
                             {finished === true ?
                             <MDBAnimation key ={"complete"} type="zoomInLeft">
-                                <MDBRow style={{"text-align": "center"}}>
+                                <MDBRow style={{"text-align": "center", "padding-top" : "15px"}}>
                                     {/* <MDBCol size={"12"}> <div className = "logo"> Rebalancing Complete! </div> <MDBIcon icon="rocket" /> </MDBCol> */}
                                     <MDBCol size={"12"}>
                                     <MDBAlert color="success"> 

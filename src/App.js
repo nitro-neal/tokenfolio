@@ -1,8 +1,5 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import ButtonPage from './EasyPortfolio/ButtonPage';
-import GridExamplesPage from './EasyPortfolio/GirdExamplePage';
 import EasyPortfolioContainer from './EasyPortfolio/EasyPortfolioContainer';
 
 
