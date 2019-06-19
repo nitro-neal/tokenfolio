@@ -155,3 +155,55 @@ body {
     box-shadow: inset 0px 0px 0px 30px #7ac142;
   }
 }
+
+
+.ToggleSwitch {
+  position: relative;
+  width: 5rem;
+  height: 2.35rem;
+  display: inline-block;
+}
+.ToggleSwitch.ToggleSwitch__rounded .Slider {
+  border-radius: 15rem;
+  background: #eceff1;
+  border: 1px solid #A0A0A0;
+}
+.ToggleSwitch.ToggleSwitch__rounded .Slider:before {
+  border-radius: 50%;
+}
+.ToggleSwitch .ToggleSwitch__wrapper {
+  position: relative;
+  width: 5rem;
+  height: 2.35rem;
+}
+.ToggleSwitch .ToggleSwitch__wrapper .Slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: .4s ease;
+}
+.ToggleSwitch .ToggleSwitch__wrapper .Slider:before {
+  width: 2.45rem;
+  height: 2.45rem;
+  position: absolute;
+  background: #fff;
+  content: '';
+  margin: 0;
+  padding: 0;
+  top: 50%;
+  left: 0.10rem;
+  transform: translateY(-50%);
+  transition: .4s;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+.ToggleSwitch .ToggleSwitch__wrapper .Slider.isChecked {
+  background: #fff;
+}
+.ToggleSwitch .ToggleSwitch__wrapper .Slider.isChecked:before {
+  left: calc(100% - 0.10rem - 2.45rem);
+  background: #0099ff;
+}

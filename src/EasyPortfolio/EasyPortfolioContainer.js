@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert, Animation } from "mdbreact";
 import ShowPieChart from "./PieChart";
@@ -8,6 +9,13 @@ import Web3 from 'web3';
 import SelectPage from "./SelectPage";
 import LoadingPage from "./LoadingPage";
 import MyModal from "./MyModal";
+import ToggleSwitch from "./ToggleSwitch";
+
+//switch style
+var NETWORK_URL = "";
+
+// const NETWORK_URL = "https://ropsten-api.kyber.network"
+// const NETWORK_URL = "https://api.kyber.network";
 
 const web3 = new Web3(Web3.givenProvider);
 var globalTokenPriceInfo = {};
@@ -15,7 +23,7 @@ var GAS_PRICE = 'low'
 var DEBUG = false;
 
 async function fetchPriceInfo() {
-    globalTokenPriceInfo = await getMarketInformation('PRICE_INFO');
+    globalTokenPriceInfo = await getMarketInformation('PRICE_INFO', NETWORK_URL);
 
     console.log('Price info: ');
     console.log(globalTokenPriceInfo)
@@ -59,11 +67,29 @@ class EasyPortfolioContainer extends React.Component {
         message : "",
         trading : false,
         totalPercentage : 100.0,
-        totalUsdValue: 0.0
+        totalUsdValue: 0.0,
+        isChecked: true
       }
     }
 
     componentDidMount() {
+
+        // window.sessionStorage.setItem("mykey", "mainnet");
+
+        const network = window.sessionStorage.getItem("network");
+        console.log('NETWORK')
+        console.log(network)
+        if (network && network === "testnet") {
+            this.setState({isChecked:false})
+            NETWORK_URL = "https://ropsten-api.kyber.network"
+        } else if (network && network === "mainnet") {
+            this.setState({isChecked:true})
+            NETWORK_URL = "https://api.kyber.network";
+        } else {
+            this.setState({isChecked:true})
+            NETWORK_URL = "https://api.kyber.network";
+        }
+
         if(DEBUG) {
             this.addTestAssets();
         } else if (web3 === undefined || web3.givenProvider === null) {
@@ -88,6 +114,10 @@ class EasyPortfolioContainer extends React.Component {
         }
         this.setState({availTokens:finalAvail})
         return priceInfo;
+    }
+
+    refreshPage() {
+        window.location.reload();
     }
 
     addTestAssets() {
@@ -172,7 +202,7 @@ class EasyPortfolioContainer extends React.Component {
 
         console.log('Performing trades: ');
         console.log(trades)
-        startTrade(web3, trades, GAS_PRICE, this.txToCompleteCallback, this.approvalsCallback);
+        startTrade(web3, trades, GAS_PRICE, this.txToCompleteCallback, this.approvalsCallback, NETWORK_URL);
       }
 
     txToCompleteCallback = (type, data, trade) => {
@@ -199,7 +229,20 @@ class EasyPortfolioContainer extends React.Component {
         approvals.push(explode[0])
         this.setState({currentApprovals: approvals})
     }
-    
+
+    toggleSwitch = () => {
+        console.log('toggle switch called')
+        if(this.state.isChecked === true) {
+            window.sessionStorage.setItem("network", "testnet");
+        }
+
+        if(this.state.isChecked === false) {
+            window.sessionStorage.setItem("network", "mainnet");
+        }
+
+        this.refreshPage();
+        // handleChange
+    }
     render() {
         
         var textAlignCenter = {"textAlign" :"center" }
@@ -240,7 +283,8 @@ class EasyPortfolioContainer extends React.Component {
                     <MDBAnimation type="slideInLeft">
                         <MDBCol className = "col-example" md="5">
                             <div className = "logo">
-                                <a href = {"/"} >Cryptofolio </a>
+                                {/* cryptofolio */}
+                                <a href = {"/"} >Tokenfolio </a>
                             </div>
                         </MDBCol>
                     </MDBAnimation>
@@ -273,6 +317,14 @@ class EasyPortfolioContainer extends React.Component {
                                     {buttonToRender}
                                 </MDBCol>
                             </MDBRow>
+
+                            <MDBRow className = "h-100 align-items-center">
+                                <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
+                                    <ToggleSwitch toggleSwitch={this.toggleSwitch} checked = {this.state.isChecked}/>
+                                    {this.state.isChecked ? <p>Mainnet</p> : <p>Ropsten</p> }
+                                </MDBCol>
+                                </MDBRow>
+                            
                         </MDBAnimation>
                     </MDBCol>
                 </MDBRow>

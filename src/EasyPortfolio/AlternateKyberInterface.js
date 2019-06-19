@@ -1,7 +1,8 @@
 import { func } from "prop-types";
 
-const NETWORK_URL = "https://ropsten-api.kyber.network"
+// const NETWORK_URL = "https://ropsten-api.kyber.network"
 // const NETWORK_URL = "https://api.kyber.network";
+var NETWORK_URL = "";
 
 const REF_ADDRESS = "0x16591D6eD1101dF43c46a027835C0717191Fb147";
 
@@ -176,27 +177,28 @@ async function myEnableTokenTransfer(tokenAddress, userAddress, gasPrice) {
 }
 
 //Other helper functions
-async function getSupportedTokens() {
-    let tokensBasicInfoRequest = await fetch(NETWORK_URL + '/currencies')
+async function getSupportedTokens(network) {
+    let tokensBasicInfoRequest = await fetch(network + '/currencies')
     let tokensBasicInfo = await tokensBasicInfoRequest.json()
     return tokensBasicInfo;
 }
 
-async function getPast24HoursTokenInformation() {
-    let past24HoursTokenInfoRequest = await fetch(NETWORK_URL + '/change24h')
+async function getPast24HoursTokenInformation(network) {
+    let past24HoursTokenInfoRequest = await fetch(network + '/change24h')
     let past24HoursTokenInfo = await past24HoursTokenInfoRequest.json()
     return past24HoursTokenInfo
 }
 
-export function getMarketInformation(info) {
+export function getMarketInformation(info, network) {
     if(info === 'AVAIL_TOKENS') {
-      return getSupportedTokens();
+      return getSupportedTokens(network);
     } else if (info === 'PRICE_INFO') {
-      return getPast24HoursTokenInformation();
+      return getPast24HoursTokenInformation(network);
     }
   }
 
-export function startTrade(myWeb3, trades, gasPrice, tradeCallback, approvalsCallback) {
+export function startTrade(myWeb3, trades, gasPrice, tradeCallback, approvalsCallback, network) {
+    NETWORK_URL = network;
     globalCallback = approvalsCallback;
     myWeb3.eth.getAccounts().then(ethAccount => startSimpleKyberTrade(myWeb3, trades, ethAccount, tradeCallback, gasPrice, approvalsCallback));
 }

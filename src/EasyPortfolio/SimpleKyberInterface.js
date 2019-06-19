@@ -1,7 +1,8 @@
 import { func } from "prop-types";
 
-const NETWORK_URL = "https://ropsten-api.kyber.network"
+// const NETWORK_URL = "https://ropsten-api.kyber.network"
 // const NETWORK_URL = "https://api.kyber.network";
+var NETWORK_URL = "";
 
 const REF_ADDRESS = "0x16591D6eD1101dF43c46a027835C0717191Fb147";
 
@@ -225,7 +226,8 @@ export function getMarketInformation(info) {
     }
   }
 
-export function startTrade(myWeb3, trades, gasPrice, tradeCallback, approvalsCallback) {
+export function startTrade(myWeb3, trades, gasPrice, tradeCallback, approvalsCallback, network) {
+    NETWORK_URL = network;
     globalCallback = approvalsCallback;
     myWeb3.eth.getAccounts().then(ethAccount => startSimpleKyberTrade(myWeb3, trades, ethAccount, tradeCallback, gasPrice, approvalsCallback));
 }
