@@ -9,7 +9,18 @@ const NoWebThree = () => {
         <MDBCol>
           <MDBJumbotron>
             <MDBCardBody>
-              <MDBCardTitle className="h2">
+            <div className = "logo">
+              {/* cryptofolio */}
+              <a href = {"/"} > <h1>Tokenfolio</h1> </a>
+              </div>
+
+              <p>Create a portfolio of ethereum tokens directly from your wallet in an instant, secure and convenient way.</p>
+
+
+<iframe title="Tokenfolio" width="560" height="315" src="https://www.youtube.com/embed/FO-SnkFPWpA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+              <MDBCardTitle style={{"padding-top" : "50px"}} className="h2">
                 You need have a web3 wallet installed to use this app.
               </MDBCardTitle>
               <p className="blue-text my-4 font-weight-bold">
