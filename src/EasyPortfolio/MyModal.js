@@ -36,7 +36,7 @@ class MyModal extends React.Component {
 
                     {this.props.tradeConfirmations.get(approval + "-approval") === undefined ?
                     <Animation type="pulse" infinite>
-                        <p>Waiting for approval from your wallet...</p>
+                        <p>...</p>
                     </Animation>
                     :
                     ""
@@ -91,7 +91,7 @@ class MyModal extends React.Component {
 
                     {this.props.tradeConfirmations.get(trade.from + "->" +trade.to) === undefined ?
                     <Animation type="pulse" infinite>
-                        <p>Waiting for confirmation from your wallet...</p>
+                        <p>...</p>
                     </Animation>
                     :
                     ""
@@ -159,7 +159,7 @@ class MyModal extends React.Component {
 
         return (
             <MDBModal size = "lg" isOpen={this.props.modal} toggle={this.props.toggle}>
-                    <MDBModalHeader toggle={this.props.toggle}> Balancing in progress... </MDBModalHeader>
+                    <MDBModalHeader toggle={this.props.toggle}> <Animation type="pulse" infinite><a href="#" >BALANCING...</a></Animation> </MDBModalHeader>
                     <MDBModalBody>
                         <MDBContainer fluid>
                             {currentTxs}
