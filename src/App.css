@@ -40,13 +40,18 @@ body {
 }
 
 .logo {
-  font-size: 40px;
-  color: #000000;
+  /* font-size: 40px; */
+  /* color: #000000; */
   text-transform: uppercase;
-  /* padding-bottom: 60px; */
+  padding-top: 60px;
+  padding-bottom: 60px;
   letter-spacing: 2px;
   line-height: 40px;
-  text-align: right;
+  text-align: center;
+}
+
+.logo h1{
+  font-size: 40px;
 }
 
 .bg {

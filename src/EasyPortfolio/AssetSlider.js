@@ -33,6 +33,8 @@ class AssetSlider extends React.Component {
 
         var myStyle = {"backgroundColor" : "grey"}
         var textAlignRight = {"textAlign" :"right" }
+        var textAlignRightAndRed = {"textAlign" :"right", "color":"red" }
+        
         var textAlignLeft = {"textAlign" :"left" }
         // var myHandleStyle = {"background-color" : "red", "border-color" : "red"}
         // var myColorMap = colorMap;
@@ -110,7 +112,11 @@ class AssetSlider extends React.Component {
                     {/* <MDBCol size={"2"}> <MDBIcon icon="chart-pie" /> </MDBCol> */}
                                 <MDBCol size={"2"}>  </MDBCol>
                                 <MDBCol size={"7"}> <p style = {textAlignLeft} className="herotext"> Total </p></MDBCol>
+                                {this.props.totalPercentage >= 99.9 ?
                                 <MDBCol size={"3"}> <p style = {textAlignRight}  className="herotext">   {Math.round(this.props.totalPercentage)} % </p></MDBCol>
+                                :
+                                <MDBCol size={"3"}> <p style = {textAlignRightAndRed}  className="herotext">   {Math.round(this.props.totalPercentage)} % </p></MDBCol>
+                                }
                                 </MDBRow>
                     </div>
                     </MDBAnimation>

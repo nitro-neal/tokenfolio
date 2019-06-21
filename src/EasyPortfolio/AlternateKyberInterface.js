@@ -2,7 +2,8 @@
 // const NETWORK_URL = "https://api.kyber.network";
 var NETWORK_URL = "";
 
-const REF_ADDRESS = "0x16591D6eD1101dF43c46a027835C0717191Fb147";
+// here is how to claim - https://developer.kyber.network/docs/Integrations-FeeSharing/
+const REF_ADDRESS = "0x2c5713746EFb794a435BD1b790d911051AB8D04e";
 
 var globalCallback = {};
 

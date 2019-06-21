@@ -1,6 +1,6 @@
 
 import React from "react";
-import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert, Animation, MDBIcon } from "mdbreact";
+import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert, Animation, MDBIcon, MDBModal, MDBModalBody, MDBModalHeader } from "mdbreact";
 import ShowPieChart from "./PieChart";
 import AssetSlider from "./AssetSlider";
 import {getCurrentAssets, computeTrades} from "./Helpers"
@@ -59,6 +59,7 @@ class EasyPortfolioContainer extends React.Component {
       this.state = {
         assets: [],
         modal: false,
+        settingsModal :false,
         availTokens: [],
         ready: false,
         currentTrades: [],
@@ -104,6 +105,12 @@ class EasyPortfolioContainer extends React.Component {
     toggle = () => {
         this.setState({
             modal: !this.state.modal
+        });
+    }
+
+    settingsToggle = () => {
+        this.setState({
+            settingsModal: !this.state.settingsModal
         });
     }
 
@@ -278,6 +285,18 @@ class EasyPortfolioContainer extends React.Component {
         return (
             
             <MDBContainer className = "h-100">
+
+            <MDBModal isOpen={this.state.settingsModal} toggle={this.settingsToggle} centered>
+                <MDBModalHeader>Settings</MDBModalHeader>
+                <MDBModalBody>
+                    <MDBRow className = "h-100 align-items-center">
+                        <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
+                            <ToggleSwitch toggleSwitch={this.toggleSwitch} checked = {this.state.isChecked}/>
+                            {this.state.isChecked ? <p>Mainnet</p> : <p>Ropsten</p> }
+                        </MDBCol>
+                    </MDBRow>
+                </MDBModalBody>
+            </MDBModal>
             
                 <MyModal currentApprovals={this.state.currentApprovals} modal={this.state.modal} toggle={this.toggle} tradeConfirmations={this.state.tradeConfirmations} currentTrades={this.state.currentTrades}/>
 
@@ -304,27 +323,31 @@ class EasyPortfolioContainer extends React.Component {
                 } 
 
                 <MDBRow className = "h-100 align-items-center">
-                    <MDBAnimation type="slideInLeft">
-                        <MDBCol className = "col-example" md="5">
+                    {/* <MDBAnimation type="slideInLeft"> */}
+                        <MDBCol md="4">
+                        <MDBAnimation type="slideInLeft">
                             <div className = "logo">
                                 {/* cryptofolio */}
-                                <a href = {"/"} >Tokenfolio </a>
+                                <a href = {"/"} > <h1>Tokenfolio</h1> </a>
+                                <ShowPieChart assets = {this.state.assets}/>
+                                <p style = {textAlignCenter} >USD Value: ${Math.round(this.state.totalUsdValue * 100) / 100}</p>
                                 {/* <a href = {"/"} ><img alt="tokenfolio" src="./tokenfolio-logo.png" ></img> </a> */}
                                 
                             </div>
+                            </MDBAnimation>
                         </MDBCol>
-                    </MDBAnimation>
+                    {/* </MDBAnimation> */}
 
-                    <MDBCol className = "col-example" md="7">
+                    <MDBCol md="8">
                         <MDBAnimation type="slideInRight">
 
-                            <MDBRow className = "h-100 align-items-center">
+                            {/* <MDBRow className = "h-100 align-items-center">
                                 <MDBCol>
                                     
                                     <ShowPieChart assets = {this.state.assets}/>
                                     <p style = {textAlignCenter} >USD Value: ${Math.round(this.state.totalUsdValue * 100) / 100}</p>
                                 </MDBCol>
-                            </MDBRow>
+                            </MDBRow> */}
 
                             <MDBRow className = "h-100 align-items-center">
                                 <MDBCol>
@@ -339,17 +362,21 @@ class EasyPortfolioContainer extends React.Component {
                             </MDBRow>
 
                             <MDBRow className = "h-100 align-items-center">
+                            
                                 <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
+                                <div style = {{"padding-left" : "20px"}}>
                                     {buttonToRender}
+                                    <a href="#" onClick={this.settingsToggle}><MDBIcon style={{"vertical-align": "bottom", "padding-bottom": "7px"}} icon="cog" /> </a>
+                                    </div>
                                 </MDBCol>
                             </MDBRow>
 
-                            <MDBRow className = "h-100 align-items-center">
+                            {/* <MDBRow className = "h-100 align-items-center">
                                 <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
                                     <ToggleSwitch toggleSwitch={this.toggleSwitch} checked = {this.state.isChecked}/>
                                     {this.state.isChecked ? <p>Mainnet</p> : <p>Ropsten</p> }
                                 </MDBCol>
-                                </MDBRow>
+                            </MDBRow> */}
                             
                         </MDBAnimation>
                     </MDBCol>

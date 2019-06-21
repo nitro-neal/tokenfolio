@@ -1,26 +1,18 @@
 import React from 'react';
 import Chart from "react-google-charts";
 
-class ShowPieChart extends React.Component {
+class PieChartAlt extends React.Component {
 
   colorMap = new Map();
   
   render() {
 
-    // this.colorMap.set('BTC', 'orange');
-    // this.colorMap.set('WBTC', 'orange');
-    // this.colorMap.set('ETH', 'grey');
-    // this.colorMap.set('BAT', 'red');
-    // this.colorMap.set('DAI', 'yellow');
-    // this.colorMap.set('OMG','blue');
-
-    var blueColors = []
-    blueColors.push("#034698");
-    blueColors.push("#006CBB");
-    blueColors.push("#28A7EA");
-    blueColors.push("#45BDEE");
-    blueColors.push("#7AD6F4");
-
+    this.colorMap.set('BTC', 'orange');
+    this.colorMap.set('WBTC', 'orange');
+    this.colorMap.set('ETH', 'grey');
+    this.colorMap.set('BAT', 'red');
+    this.colorMap.set('DAI', 'yellow');
+    this.colorMap.set('OMG','blue');
     
     // console.log('ASSETS: ')
     // console.log(this.props.assets);
@@ -44,31 +36,21 @@ class ShowPieChart extends React.Component {
 
     for (var i = 0; i < assets.length; i ++) {
       pieChartData.push([assets[i].symbol, assets[i].newPortfolioPercent]);
-      // if(this.colorMap.has(assets[i].symbol)) {
-      //   colors.push(this.colorMap.get(assets[i].symbol))
-      // } else {
-      //   colors.push('green')
-      // }
-      if(blueColors.length > i) {
-        colors.push(blueColors[i])
+      if(this.colorMap.has(assets[i].symbol)) {
+        colors.push(this.colorMap.get(assets[i].symbol))
       } else {
-        colors.push('#7AD6F4')
+        colors.push('green')
       }
     }
 
-    var mySlices = {}
-    for (var i = 0; i < colors.length; i ++) {
-      mySlices[i] = { color: colors[i] };
-    }
-  
     return (
       
 
       
                                 
         <Chart
-          // width={'400px'}
-          height={'200px'}
+          // width={'200px'}
+          // height={'200px'}
           chartType="PieChart"
           loader={<div>Loading Chart..</div>}
           data={pieChartData}
@@ -78,10 +60,16 @@ class ShowPieChart extends React.Component {
               //title: 'USD Value: $233',
               backgroundColor: { fill:'transparent' },
               legend: 'none',
-              is3D: 'true',
-              // pieHole: 0.7,
+              pieHole: 0.7,
               pieSliceText: 'none',
-              slices: mySlices
+              slices: {
+                0: { color: colors[0] },
+                1: { color: colors[1] },
+                2: { color: colors[2] },
+                3: { color: colors[3] },
+                4: { color: colors[4] },
+                5: { color: colors[5] }
+              }
           }}
           rootProps={{ 'data-testid': '1' }}
           />
@@ -90,4 +78,4 @@ class ShowPieChart extends React.Component {
   }
 }
 
-export default ShowPieChart;
+export default PieChartAlt;
