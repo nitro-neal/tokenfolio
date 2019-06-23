@@ -17,7 +17,9 @@ const NoWebThree = () => {
               <p>Create a portfolio of ethereum tokens directly from your wallet in an instant, secure and convenient way.</p>
 
 
-<iframe title="Tokenfolio" width="560" height="315" src="https://www.youtube.com/embed/FO-SnkFPWpA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <div class="video-container">
+            <iframe title="Tokenfolio" width="560" height="315" src="https://www.youtube.com/embed/FO-SnkFPWpA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
 
 
               <MDBCardTitle style={{"padding-top" : "50px"}} className="h2">

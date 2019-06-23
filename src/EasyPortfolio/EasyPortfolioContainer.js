@@ -44,7 +44,7 @@ async function init(that) {
     } catch (err) {
         console.log("requestAccounts failed, Works fine still for older web3 implementations")
     }
-
+     
     var priceInfo = await fetchPriceInfo()
 
     that.addAvailTokens(priceInfo)
