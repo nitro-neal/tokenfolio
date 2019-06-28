@@ -32,7 +32,7 @@ class MyModal extends React.Component {
                     {/* <MDBCol size={"3"}> <img alt ="" style ={imageStyle} src={"./logos/" + approval.toLowerCase() + ".png"}/> </MDBCol> */}
                     <MDBCol size={"3"}> <MDBIcon far icon="thumbs-up" /> </MDBCol>
                     {/* <MDBCol sm={"6"}> <a href="https://ropsten.etherscan.io/tx/0x6dbcb6eaca690eef54d08733fede54f21baf125400ed8ee08af71a8c5605c0ed"> > </a> </MDBCol> */}
-                    <MDBCol size={"4"}>
+                    <MDBCol size={"3"}>
 
                     {this.props.tradeConfirmations.get(approval + "-approval") === undefined ?
                     <Animation type="pulse" infinite>
@@ -70,6 +70,7 @@ class MyModal extends React.Component {
                     :
                     ""
                     } */}
+                    <a rel="noopener noreferrer" target= "_blank" href = {"https://etherscan.io/"}> <MDBIcon icon="external-link-alt" /></a>
                 </MDBCol>
 
                 </MDBRow>

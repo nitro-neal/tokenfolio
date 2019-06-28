@@ -7,6 +7,8 @@ import Slider from 'rc-slider';
 // import {Container, Row, Col} from 'react-bootstrap';
 import {MDBContainer, MDBRow, MDBCol, MDBAnimation } from "mdbreact";
 
+import isMobile from "react-device-detect";
+
 
 const wrapperStyle = { marginLeft: '15%', marginRight :'15%' };
 const imageStyle = {width : '30px'}
@@ -36,6 +38,12 @@ class AssetSlider extends React.Component {
         var textAlignRightAndRed = {"textAlign" :"right", "color":"red" }
         
         var textAlignLeft = {"textAlign" :"left" }
+
+        var animationTypeRight = "flipInX";
+
+        // isMobile = true;
+
+
         // var myHandleStyle = {"background-color" : "red", "border-color" : "red"}
         // var myColorMap = colorMap;
 
@@ -65,7 +73,7 @@ class AssetSlider extends React.Component {
 
             items.push(
                 <MDBContainer key ={asset.symbol}>
-                <MDBAnimation key = {asset.symbol} type="slideInRight">
+                <MDBAnimation key = {asset.symbol} type={animationTypeRight}>
                 <div key = {asset.symbol}>
                 
                     
@@ -106,7 +114,7 @@ class AssetSlider extends React.Component {
                 
                 <MDBContainer key ="total">
                 <br></br>
-                    <MDBAnimation key = "total" type="slideInRight">
+                    <MDBAnimation key = "total" type={animationTypeRight}>
                     <div key = "total">
                 <MDBRow>
                     {/* <MDBCol size={"2"}> <MDBIcon icon="chart-pie" /> </MDBCol> */}

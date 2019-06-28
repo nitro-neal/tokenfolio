@@ -15,8 +15,12 @@ class ShowPieChart extends React.Component {
     // this.colorMap.set('OMG','blue');
 
     var blueColors = []
-    blueColors.push("#034698");
-    blueColors.push("#006CBB");
+    blueColors.push("#16194e")
+    blueColors.push("#1f266b")
+    blueColors.push("#2c378f")
+
+    // blueColors.push("#034698");
+    // blueColors.push("#006CBB");
     blueColors.push("#28A7EA");
     blueColors.push("#45BDEE");
     blueColors.push("#7AD6F4");

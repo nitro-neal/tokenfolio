@@ -11,11 +11,20 @@ import LoadingPage from "./LoadingPage";
 import MyModal from "./MyModal";
 import ToggleSwitch from "./ToggleSwitch";
 import NoWebThree from "./NoWebThree";
+import isMobile from "react-device-detect";
 
 
 var NETWORK_URL = "";
 // const NETWORK_URL = "https://ropsten-api.kyber.network"
 // const NETWORK_URL = "https://api.kyber.network";
+// convert to full web3 - https://medium.com/easwap/dex-in-15-days-144b71166e73
+
+//Shortcuts clg-> console.log(object)
+// cmd+b to remove left side panel
+// cmd+p to find file
+// select then cmd + shift + b for beatify
+// cmd+k then z for zen mode
+// shift+ cmd + M for problems menu
 
 const web3 = new Web3(Web3.givenProvider);
 var globalTokenPriceInfo = {};
@@ -44,7 +53,7 @@ async function init(that) {
     } catch (err) {
         console.log("requestAccounts failed, Works fine still for older web3 implementations")
     }
-     
+
     var priceInfo = await fetchPriceInfo()
 
     that.addAvailTokens(priceInfo)
@@ -99,6 +108,7 @@ class EasyPortfolioContainer extends React.Component {
         } else {
             init(this)   
         }
+        
     }
 
     
@@ -261,6 +271,16 @@ class EasyPortfolioContainer extends React.Component {
         
         var textAlignCenter = {"textAlign" :"center" }
         var buttonToRender;
+        var animationTypeLeft = "slideInLeft";
+        var animationTypeRight = "slideInRight";
+
+        // isMobile = true;
+
+        if(isMobile) {
+            animationTypeLeft = "flipInX";
+            animationTypeRight = "flipInX";
+        }
+        
 
         if(this.state.ready === false) {
             return <LoadingPage/>
@@ -271,14 +291,14 @@ class EasyPortfolioContainer extends React.Component {
         }
 
         if(this.state.trading) {
-            buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.toggle} color="primary"><Animation type="pulse" infinite>Balancing in progress...</Animation></MDBBtn>
+            buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.toggle} color="indigo"><Animation type="pulse" infinite>Balancing in progress...</Animation></MDBBtn>
 
         } else {
             if(this.state.totalPercentage >= 99.99) {
-                buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="primary">Rebalance</MDBBtn>
+                buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="indigo">Rebalance</MDBBtn>
 
             } else {
-                buttonToRender = <MDBBtn data-toggle="modal" disabled data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="primary">Rebalance</MDBBtn>
+                buttonToRender = <MDBBtn data-toggle="modal" disabled data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="indigo">Rebalance</MDBBtn>
             }
         }
 
@@ -325,12 +345,19 @@ class EasyPortfolioContainer extends React.Component {
                 <MDBRow className = "h-100 align-items-center">
                     {/* <MDBAnimation type="slideInLeft"> */}
                         <MDBCol md="4">
-                        <MDBAnimation type="slideInLeft">
+                        <MDBAnimation type={animationTypeLeft}>
                             <div className = "logo">
                                 {/* cryptofolio */}
-                                <a href = {"/"} > <h1>Tokenfolio</h1> </a>
+                                {/* <a href = {"/"} > <h1>Tokenfolio</h1> </a> */}
+                                <img class="img-fluid" alt = "Tokenfolio logo" src ="tflogo.png"></img>
                                 <ShowPieChart assets = {this.state.assets}/>
+                                {this.state.usdValue === -1 ?
+                                <div key = "usdvalue" className="spinner-border text-primary" role="status">
+                                <span className="sr-only">Loading...</span>
+                                </div>
+                                :       
                                 <p style = {textAlignCenter} >USD Value: ${Math.round(this.state.totalUsdValue * 100) / 100}</p>
+                                }
                                 {/* <a href = {"/"} ><img alt="tokenfolio" src="./tokenfolio-logo.png" ></img> </a> */}
                                 
                             </div>
@@ -339,7 +366,7 @@ class EasyPortfolioContainer extends React.Component {
                     {/* </MDBAnimation> */}
 
                     <MDBCol md="8">
-                        <MDBAnimation type="slideInRight">
+                        <MDBAnimation type={animationTypeRight}>
 
                             {/* <MDBRow className = "h-100 align-items-center">
                                 <MDBCol>
@@ -366,7 +393,7 @@ class EasyPortfolioContainer extends React.Component {
                                 <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
                                 <div style = {{"padding-left" : "20px"}}>
                                     {buttonToRender}
-                                    <a href="#" onClick={this.settingsToggle}><MDBIcon style={{"vertical-align": "bottom", "padding-bottom": "7px"}} icon="cog" /> </a>
+                                    <a style= {{"color": "#586b81"}} href="#" onClick={this.settingsToggle}><MDBIcon style={{"vertical-align": "bottom", "padding-bottom": "7px"}} color ="#586b81" icon="cog" /> </a>
                                     </div>
                                 </MDBCol>
                             </MDBRow>
@@ -377,10 +404,19 @@ class EasyPortfolioContainer extends React.Component {
                                     {this.state.isChecked ? <p>Mainnet</p> : <p>Ropsten</p> }
                                 </MDBCol>
                             </MDBRow> */}
+
+                            <MDBRow className = "h-100 align-items-center">
+                            <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
+                            <p>Powered by <a href="https://kyber.network/" target="_blank">Kyber network</a></p>
+                            </MDBCol>
+                            </MDBRow>
                             
                         </MDBAnimation>
                     </MDBCol>
+
+                    
                 </MDBRow>
+                
             </MDBContainer> 
         );
     }
