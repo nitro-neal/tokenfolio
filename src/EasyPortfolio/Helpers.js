@@ -1,4 +1,7 @@
 export function computeTrades(stateAssets) {
+
+    console.log('stateassets');
+    console.log(stateAssets[0]);
     var trades = []
     var assets = JSON.parse(JSON.stringify(stateAssets));
     var newPortfolioPercentMap = new Map();
@@ -9,6 +12,8 @@ export function computeTrades(stateAssets) {
             assets[iter].newPortfolioPercentMap
         )
         assets[iter].usdNeeded = assets[iter].newPercentUsdValue - assets[iter].usdValue
+        assets[iter].bnamount = stateAssets[iter].bnamount
+        assets[iter].decimals = stateAssets[iter].decimals
     }
 
     for (var i = 0; i < assets.length; i++) {
@@ -29,6 +34,7 @@ export function computeTrades(stateAssets) {
                 trade.fromAddress = assets[i].tokenAddress;
                 trade.toAddress = assets[j].tokenAddress;
                 trade.bnamount = assets[i].bnamount;
+                trade.bndecimals = assets[i].bndecimals;
 
                 // we need to pour money from negative to positive
                 var negativeAmountLeftToGive = assets[i].usdNeeded + assets[j].usdNeeded;
@@ -59,6 +65,8 @@ export function computeTrades(stateAssets) {
 
                 trade.otherTokenRecieveAmount = (trade.amount * assets[i].pricePerAsset) / assets[j].pricePerAsset;
                 trades.push(trade)
+                console.log('wtf trade')
+                console.log(trade)
             }
         }
     }
@@ -201,53 +209,15 @@ function newWeb3Call(
         .then(balance => {
 
             var decimals = "" + tokenPriceInfo['ETH_' + symbol].token_decimal;
-            var floatFinalTokenBalace = parseFloat(
-                globalWeb3.utils.toBN(balance).toString()
-            )
+            var floatFinalTokenBalace = parseFloat(globalWeb3.utils.toBN(balance).toString());
 
             if(floatFinalTokenBalace === 0) {
                 return;
             }
 
-
-            // console.log('float final balance ')
-            // console.log(floatFinalTokenBalace)
-            // console.log("REDUCE? ~ " + new globalWeb3.utils.toBN(floatFinalTokenBalace).toString() + " VS " + globalWeb3.utils.toBN(balance).toString())
-
-            // if(new globalWeb3.utils.toBN(floatFinalTokenBalace).cmp(globalWeb3.utils.toBN(balance)) === 1) {
-            //     console.log('reducing!' + floatFinalTokenBalace)
-            //     floatFinalTokenBalace = floatFinalTokenBalace - .00000000000001
-            //     console.log('new!' + floatFinalTokenBalace)
-
-            // }
-
-            console.log("floatFinalTokenBalace for " + symbol)
-            console.log(floatFinalTokenBalace)
-            console.log('vs')
-            console.log(globalWeb3.utils.toBN(balance).toString())
-            var smallNumFloat = parseFloat(
-                globalWeb3.utils.toBN(10).pow(globalWeb3.utils.toBN(decimals)).toString()
-            )
+            var smallNumFloat = parseFloat(globalWeb3.utils.toBN(10).pow(globalWeb3.utils.toBN(decimals)).toString())
             var floatFinalTokenAmount = floatFinalTokenBalace / smallNumFloat;
 
-            console.log('value i need')
-            var bn = globalWeb3.utils.toBN(balance)
-            var dec = globalWeb3.utils.toBN(decimals)
-
-            console.log('dec')
-            console.log(dec.toString())
-
-            console.log("BIG NUM")
-            console.log(bn)
-            console.log(bn.toString())
-
-            // var val = bn.div(dec)
-            console.log("MY CREATE STRING")
-            console.log(getDecimalString(bn.toString(), parseInt(dec)))
-
-            console.log("FINAL ~ " + floatFinalTokenAmount + " VS " + getDecimalString(bn.toString(), parseInt(dec)))
-
-            // console.log((globalWeb3.utils.toBN(balance).div(globalWeb3.utils.toBN(10).pow(globalWeb3.utils.toBN(decimals))).toString()))
 
             if (floatFinalTokenAmount > 0.0000001) {
                 console.log("Non Zero Balance")
@@ -262,13 +232,16 @@ function newWeb3Call(
                     "tokenAddress": tokenPriceInfo[ppatoken].token_address,
                     "amount": floatFinalTokenAmount,
                     // "bnamount": globalWeb3.utils.toBN(balance),
-                    "bnamount": getDecimalString(bn.toString(), parseInt(dec)),
+                    "bnamount": globalWeb3.utils.toBN(balance),
+                    "bndecimals" : globalWeb3.utils.toBN(decimals),
                     "pricePerAsset": pricePerAsset,
                     "usdValue": pricePerAsset * floatFinalTokenAmount,
                     "newPercentUsdValue": pricePerAsset * floatFinalTokenAmount,
                     "currentPortfolioPercent": -1,
                     "newPortfolioPercent": -1
                 }
+                console.log('ASSET!')
+                console.log(asset)
                 that.addAsset(asset);
             }
         });

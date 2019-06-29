@@ -26,7 +26,8 @@ class NoWebThree extends React.Component {
             fakeKyberTradeToggle: false,
             totalPercentage: 100.0,
             totalUsdValue: 100,
-            assets: []
+            assets: [],
+            gtag : {}
         }
 
     }
@@ -38,6 +39,7 @@ class NoWebThree extends React.Component {
     }
 
     componentDidMount() {
+        this.gtag = window.gtag
         var assets = [];
         var ethAsset = {
             "symbol": "ETH",
@@ -82,6 +84,15 @@ class NoWebThree extends React.Component {
     }
 
     fakeKyberTrade = () => {
+
+        this.gtag('event', 'clickDemo', {
+            'event_category': 'clickDemoCategory',
+            'event_label': 'clickDemoLabel',
+            'transport_type': 'beacon',
+            'event_callback': function(){/*document.location = url;*/}
+            //'event_callback': function(){document.location = url;}
+          });
+      
         this.setState({
             fakeKyberTradeToggle: !this.state.fakeKyberTradeToggle
         })
@@ -140,9 +151,7 @@ class NoWebThree extends React.Component {
 
                 <MDBContainer className="mt-5 text-center">
 
-                
-                            
-                          
+            
                           
                     <MDBRow>
 
@@ -240,21 +249,25 @@ class NoWebThree extends React.Component {
                                             changeSlider={this.changeSlider}
                                             assets={this.state.assets}/>
 
+                                            {this.state.fakeKyberTradeToggle === false ?
+                                                ""
+                                            :
+                                            
+                                            
+                                            <MDBAnimation key = "instruction" type="flipInX">
+                                            <hr className="my-4"/>
+                                            <div>
+                                                <h4>This Dapp is made on top of Ethereum blockchain. To use this Dapp</h4>
+                                                <p>For desktop install - <a rel="noopener noreferrer" target="_blank" href="https://metamask.io/">metamask extension.</a></p> 
+                                                <p>For Android/IOS download ethereum browser - <a rel="noopener noreferrer" target="_blank" href="https://trustwallet.com">Trust wallet</a></p>
+                                            </div>
+                                            <hr className="my-4"/>
+                                            </MDBAnimation>
+                                            }
+                                            
                                         <MDBBtn onClick={this.fakeKyberTrade} color="indigo">Rebalance</MDBBtn>
 
-                                        {this.state.fakeKyberTradeToggle === false ?
-                                            ""
-                                        :
                                         
-                                        <MDBAnimation key = "instruction" type="flipInX">
-                                        <hr className="my-4"/>
-                                        <div>
-                                            <h4>This Dapp is made on top of Ethereum blockchain. To use this Dapp</h4>
-                                            <p>For desktop install - <a rel="noopener noreferrer" target="_blank" href="https://metamask.io/">metamask extension.</a></p> 
-                                            <p>For Android/IOS download ethereum browser - <a rel="noopener noreferrer" target="_blank" href="https://trustwallet.com">Trust wallet</a></p>
-                                        </div>
-                                        </MDBAnimation>
-                                        }
                                     </MDBCol>
                                 </MDBRow>
                             </MDBJumbotron>

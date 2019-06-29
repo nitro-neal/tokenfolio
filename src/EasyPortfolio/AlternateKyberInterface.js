@@ -51,6 +51,7 @@ async function startSimpleKyberTrade(
             ethAccount,
             trades[i].amount,
             trades[i].bnamount,
+            trades[i].bndecimals,
             trades[i].otherTokenRecieveAmount,
             gasPrice,
             myWeb3,
@@ -173,6 +174,7 @@ async function getTradeTx(
     userAddress,
     amountToSell,
     amountBn,
+    decimalsBn,
     amountToBuy,
     gasPrice,
     myWeb3,
@@ -191,15 +193,31 @@ async function getTradeTx(
 
     console.log('sellQty ' + sellQty + " buyQty " + buyQty + " minDstQty " + minDstQty)
 
-    console.log('BN BUSINESS')
-    console.log('amountToSell: ' + amountToSell + ' amountBn ' + parseFloat(amountBn) )
+    // if(sellToken !== "ETH") {
+    //     console.log('BN BUSINESS')
+    //     console.log('amountToSell: ' + amountToSell + ' amountBn ' + parseFloat(amountBn.toString()) )
 
-    if(Math.abs(parseFloat(amountBn) - amountToSell) < .0000001) {
-        //USE BN Amount..
-        console.log('using bn amount!!');
-        console.log('amountToSell: ' + amountToSell + ' amountBn ' + amountBn )
-        // amountToSell = amountBn;
-    }
+    //     var bignumasint = Math.pow(amountToSell, parseFloat(decimalsBn.toString()))
+    //     console.log("bignumasint")
+    //     console.log(bignumasint)
+    //     var amountToSellInInteger = parseInt(Math.pow(amountToSell, parseFloat(decimalsBn.toString())))
+    //     console.log('WEB3 WTF?')
+    //     console.log(myWeb3)
+
+    //     var dif = myWeb3.utils.toBN(amountToSellInInteger).sub(amountBn)
+    //     console.log('amountToSellInInteger '+  amountToSellInInteger + ' VS ' + amountBn.toString() + ' THE DIFFERENCE IS ' + dif)
+
+    //     if(Math.abs(parseFloat(amountBn) - amountToSell) < .0000001) {
+    //         //USE BN Amount..
+    //         console.log('using bn amount!!');
+    //         console.log('amountToSell: ' + amountToSell + ' amountBn ' + amountBn )
+    //         // amountToSell = amountBn;
+    //     }
+    // }
+
+    console.log('BEFORE:' + amountToSell)
+    amountToSell = floor10(amountToSell, -9);  // -55.6
+    console.log('AFTER:' + amountToSell)
 
     let rawTx = await executeTrade(
         userAddress,
@@ -357,3 +375,25 @@ export function startTrade(
             ethAccount => startSimpleKyberTrade(myWeb3, trades, ethAccount, tradeCallback, gasPrice, approvalsCallback)
         );
 }
+
+function decimalAdjust(type, value, exp) {
+    // If the exp is undefined or zero...
+    if (typeof exp === 'undefined' || +exp === 0) {
+      return Math[type](value);
+    }
+    value = +value;
+    exp = +exp;
+    // If the value is not a number or the exp is not an integer...
+    if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+      return NaN;
+    }
+    // Shift
+    value = value.toString().split('e');
+    value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+    // Shift back
+    value = value.toString().split('e');
+    return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+  }
+
+  // Decimal floor
+const floor10 = (value, exp) => decimalAdjust('floor', value, exp);

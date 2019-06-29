@@ -78,13 +78,15 @@ class EasyPortfolioContainer extends React.Component {
         trading : false,
         totalPercentage : 100.0,
         totalUsdValue: -1.0,
-        isChecked: true
+        isChecked: true,
+        gtag: {}
       }
     }
 
     componentDidMount() {
 
         // window.sessionStorage.setItem("mykey", "mainnet");
+        this.gtag = window.gtag
 
         const network = window.sessionStorage.getItem("network");
         console.log('Current Network')
@@ -212,7 +214,6 @@ class EasyPortfolioContainer extends React.Component {
 
     startKyberTrade = () => {
         
-
         var trades = computeTrades(this.state.assets);
 
         if(trades.length ===0) {
@@ -226,6 +227,19 @@ class EasyPortfolioContainer extends React.Component {
 
         console.log('Performing trades: ');
         console.log(trades)
+
+        try {
+            this.gtag('event', 'clickBalanceReal', {
+                'event_category': 'clickBalanceRealCategory',
+                'event_label': 'clickBalanceRealLabel',
+                'transport_type': 'beacon',
+                'event_callback': function(){/*document.location = url;*/}
+                //'event_callback': function(){document.location = url;}
+            });
+        } catch(e) {
+
+        }
+
         startTrade(web3, trades, GAS_PRICE, this.txToCompleteCallback, this.approvalsCallback, NETWORK_URL);
       }
 
