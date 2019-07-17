@@ -1,7 +1,5 @@
 export function computeTrades(stateAssets) {
 
-    console.log('stateassets');
-    console.log(stateAssets[0]);
     var trades = []
     var assets = JSON.parse(JSON.stringify(stateAssets));
     var newPortfolioPercentMap = new Map();
@@ -56,17 +54,8 @@ export function computeTrades(stateAssets) {
                     assets[j].usdNeeded = negativeAmountLeftToGive;
                 }
 
-                console.log('DOING MATH')
-                console.log((trade.amount * assets[i].pricePerAsset))
-                console.log((trade.amount * assets[i].pricePerAsset) / assets[j].pricePerAsset)
-
-                console.log('price per asset..')
-                console.log(assets[j].pricePerAsset)
-
                 trade.otherTokenRecieveAmount = (trade.amount * assets[i].pricePerAsset) / assets[j].pricePerAsset;
                 trades.push(trade)
-                console.log('wtf trade')
-                console.log(trade)
             }
         }
     }
@@ -120,44 +109,27 @@ export function getCurrentAssets(globalWeb3, tokenPriceInfo, that) {
         }
     ];
 
-    globalWeb3
-        .eth
-        .getAccounts()
+    globalWeb3.eth.getAccounts()
         .then(
             address => newExecuteBatch(address, globalWeb3, tokenPriceInfo, minABI, that)
         );
 }
 
-function newExecuteBatch(
-    ethAddressArray,
-    globalWeb3,
-    tokenPriceInfo,
-    minABI,
-    that
-) {
+function newExecuteBatch(ethAddressArray,globalWeb3,tokenPriceInfo,minABI,that) {
 
     var ethAddress = ethAddressArray[0]
 
-    globalWeb3
-        .eth
-        .getBalance(ethAddress)
+    globalWeb3.eth.getBalance(ethAddress)
         .then(value => addEthBalance(value, globalWeb3, tokenPriceInfo, that));
 
-    // globalWeb3.eth.getBalance.request('0x0000000000000000000000000000000000000000',
-    // 'latest') var ethBalance = parseFloat(drizzle.web3.utils.fromWei(balance,
-    // 'ether')); var pricePerAsset = tokenPriceInfo['ETH_ETH'].rate_usd_now var
-    // ethAsset =  {"symbol" : "ETH", "tokenName" :
-    // tokenPriceInfo['ETH_ETH'].token_name, "tokenAddress" :
-    // tokenPriceInfo['ETH_ETH'].token_address, "amount" : ethBalance,
-    // "pricePerAsset":pricePerAsset, "usdValue": pricePerAsset * ethBalance,
-    // "newPercentUsdValue": pricePerAsset * ethBalance, "currentPortfolioPercent" :
-    // -1, "newPortfolioPercent" : -1} that.addAsset(ethAsset);
 
+
+    that.loadingStart(Object.keys(tokenPriceInfo).length)
+    
     for (var key in tokenPriceInfo) {
         var symbolTokenAddress = tokenPriceInfo[key].token_address;
-        var contract = new globalWeb3
-            .eth
-            .Contract(minABI, symbolTokenAddress);
+        var contract = new globalWeb3.eth.Contract(minABI, symbolTokenAddress);
+
         newWeb3Call(
             globalWeb3,
             ethAddress,
@@ -208,6 +180,8 @@ function newWeb3Call(
         })
         .then(balance => {
 
+            that.loadingDone()
+
             var decimals = "" + tokenPriceInfo['ETH_' + symbol].token_decimal;
             var floatFinalTokenBalace = parseFloat(globalWeb3.utils.toBN(balance).toString());
 
@@ -220,8 +194,7 @@ function newWeb3Call(
 
 
             if (floatFinalTokenAmount > 0.0000001) {
-                console.log("Non Zero Balance")
-                console.log(symbol + " => " + floatFinalTokenBalace / smallNumFloat);
+                console.log("Non Zero Balance: " + symbol + " => " + floatFinalTokenBalace / smallNumFloat);
 
                 var ppatoken = 'ETH_' + symbol;
                 var pricePerAsset = tokenPriceInfo[ppatoken].rate_usd_now
@@ -240,16 +213,8 @@ function newWeb3Call(
                     "currentPortfolioPercent": -1,
                     "newPortfolioPercent": -1
                 }
-                console.log('ASSET!')
-                console.log(asset)
+                
                 that.addAsset(asset);
             }
         });
-}
-
-function getDecimalString(bigString, decimals) {
-    console.log('here is my dec')
-    console.log(decimals - 18)
-    var toMove = bigString.length - decimals
-    return bigString.substr(0, toMove) + "." + bigString.substr(toMove);
 }

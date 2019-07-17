@@ -4,11 +4,7 @@ import 'rc-tooltip/assets/bootstrap.css';
 import React from 'react';
 import Slider from 'rc-slider';
 
-// import {Container, Row, Col} from 'react-bootstrap';
 import {MDBContainer, MDBRow, MDBCol, MDBAnimation } from "mdbreact";
-
-import isMobile from "react-device-detect";
-
 
 const wrapperStyle = { marginLeft: '15%', marginRight :'15%' };
 const imageStyle = {width : '30px'}
@@ -36,29 +32,16 @@ class AssetSlider extends React.Component {
         var myStyle = {"backgroundColor" : "grey"}
         var textAlignRight = {"textAlign" :"right" }
         var textAlignRightAndRed = {"textAlign" :"right", "color":"red" }
-        
         var textAlignLeft = {"textAlign" :"left" }
-
         var animationTypeRight = "flipInX";
-
-        // isMobile = true;
-
-
-        // var myHandleStyle = {"background-color" : "red", "border-color" : "red"}
-        // var myColorMap = colorMap;
 
         var sortedAssets = [];
 
-        this.props.assets.map((asset) => {
+        for(let asset of this.props.assets) {
             sortedAssets.push(asset);
-        });
+        }
 
         sortedAssets.sort( function(a, b) {
-            // if(a.symbol === 'ETH') {
-            //     return a;
-            // }
-
-            // return a.symbol-b.symbol
             if(a.symbol === 'ETH' || b.symbol === 'ETH') {
                 return 1
             }
@@ -76,28 +59,15 @@ class AssetSlider extends React.Component {
                 <MDBAnimation key = {asset.symbol} type={animationTypeRight}>
                 <div key = {asset.symbol}>
                 
-                    
                         <MDBRow>
                         <MDBCol size={"2"}> <img alt ="" style ={imageStyle} src={"./logos/" + asset.symbol.toLowerCase() + ".png"}/> </MDBCol>
                             <MDBCol size={"7"}> <p style = {textAlignLeft} className="herotext"> {asset.tokenName}  ({asset.symbol}) </p></MDBCol>
                             <MDBCol size={"3"}> <p style = {textAlignRight}  className="herotext">   {Math.round(asset.newPortfolioPercent)} % </p></MDBCol>
                         </MDBRow>
-                        
-                
-                
 
                         <MDBRow>
                         <MDBCol>
                 <div key={asset.symbol} style={wrapperStyle}>
-                    {/* {asset.symbol} => {Math.round(asset.newPortfolioPercent)} */}
-                    {/* <p>{asset.tokenName}</p> */}
-                    {/* <p>OLD PERCENT: {Math.round(asset.currentPortfolioPercent)} </p>
-                    <p>NEW PERCENT: {Math.round(asset.newPortfolioPercent)} </p>
-                    <p>AMOUNT: {asset.amount}</p>
-                    <p>PRICE PER ASSET: {asset.pricePerAsset} </p>
-                    <p>USD VALUE: {asset.usdValue} </p>
-                    <p>NEW USD VALUE: {asset.newPercentUsdValue} </p> */}
-                    {/* <p class="herotext"> <img alt ="" style ={imageStyle} src={"./logos/" + asset.symbol.toLowerCase() + ".png"}/> <span class={textAlignLeft}> {asset.tokenName}  ({asset.symbol}) </span> <span style ={textAlignRight} > {Math.round(asset.newPortfolioPercent)} </span> </p> */}
                     <Slider trackStyle = {colorMap.get(asset.symbol)} handleStyle={colorMap.get(asset.symbol)} railStyle = {myStyle} min={0} max={100} defaultValue={5} value = {computedValue} onChange={(e) => this.props.changeSlider(asset,e)} />
                 </div>
                 </MDBCol>
@@ -117,7 +87,6 @@ class AssetSlider extends React.Component {
                     <MDBAnimation key = "total" type={animationTypeRight}>
                     <div key = "total">
                 <MDBRow>
-                    {/* <MDBCol size={"2"}> <MDBIcon icon="chart-pie" /> </MDBCol> */}
                                 <MDBCol size={"2"}>  </MDBCol>
                                 <MDBCol size={"7"}> <p style = {textAlignLeft} className="herotext"> Total </p></MDBCol>
                                 {this.props.totalPercentage >= 99.9 ?
@@ -129,23 +98,8 @@ class AssetSlider extends React.Component {
                     </div>
                     </MDBAnimation>
                     </MDBContainer>
-
-                /* <MDBContainer key ="usdValue">
-                <br></br>
-                    <MDBAnimation key = "usdValue" type="slideInRight">
-                    <div key = "usdValue">
-                <MDBRow>
-                                <MDBCol size={"2"}>  </MDBCol>
-                                <MDBCol size={"7"}> <p style = {textAlignLeft} className="herotext"> USD Value </p></MDBCol>
-                                <MDBCol size={"3"}> <p style = {textAlignRight}  className="herotext">   ${Math.round(this.props.totalUsdValue)} </p></MDBCol>
-                                </MDBRow>
-                    </div>
-                    </MDBAnimation>
-                    </MDBContainer>
-                    </> */
             )
         }
-
 
         return (
 

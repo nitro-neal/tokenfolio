@@ -1,32 +1,10 @@
-.App {
-  /* text-align: center; */
-}
-
-.App-logo {
-  /* animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none; */
-}
-
-.App-header {
-  /* background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white; */
-}
-
-.App-link {
-  /* color: #61dafb; */
-}
-
 #root,
 html,
 body {
-  height: 100%
+  height: 100%;
+  /* font-family: "Cerebri Sans,sans-serif"; */
+  font-family: "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-weight: 400;
 }
 
 a {
@@ -34,7 +12,6 @@ a {
 }
 
 .header {
-  /* width: 220px; */
   width: 100%;
   bottom: 0;
   top: 0;
@@ -44,11 +21,9 @@ a {
 }
 
 .logo {
-  /* font-size: 40px; */
-  /* color: #000000; */
-  text-transform: uppercase;
-  padding-top: 60px;
-  padding-bottom: 60px;
+  /* text-transform: uppercase; */
+  padding-top: 20px;
+  padding-bottom: 20px;
   letter-spacing: 2px;
   line-height: 40px;
   text-align: center;
@@ -58,6 +33,15 @@ a {
   font-size: 40px;
 }
 
+.centerthings {
+  text-transform: uppercase;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  letter-spacing: 2px;
+  line-height: 40px;
+  text-align: center;
+}
+
 .bg {
   background-image: url("https://mdbootstrap.com/img/Photos/Horizontal/Nature/full page/img(20).jpg");
   height: 100vh;
@@ -65,17 +49,6 @@ a {
   background-repeat: no-repeat;
   background-size: cover;
   }
-  
-/* .mylogo {
-  font-size: 40px;
-  color: #000000;
-  text-transform: uppercase;
-  padding-bottom: 60px;
-  letter-spacing: 2px;
-  line-height: 40px;
-  text-align: right;
-  
-} */
 
 .table {
   display: table;
@@ -88,14 +61,6 @@ a {
   vertical-align: middle;
 }
 
-.col-example {
-  /* padding: 1rem; */
-  /* background-color: #33b5e5;
-  border: 2px solid #fff;
-  color: #fff; */
-  /* text-align: center; */
-}
-
 .projects {
   padding-left: 80px;
   padding-right: 50px;
@@ -105,16 +70,6 @@ a {
   position: relative;
   margin-bottom: 40px;
 }
-
-/* @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-} */
-
 
 .checkmark__circle {
   stroke-dasharray: 166;
@@ -224,7 +179,6 @@ a {
 	padding-top:30px;
 	height:0;
   overflow:hidden;
-  /* max-width: 600px; */
 }
 
 .video-container iframe, .video-container object, .video-container embed {
@@ -234,12 +188,6 @@ a {
 	width:100%;
 	height:100%;
 }
-
-/* @media (max-width: 991px)
-.card.features {
-    margin-bottom: 2rem;
-} */
-
 
 .card.features {
   border: 0;
@@ -315,3 +263,16 @@ a {
 .lightblue {
   color : #586b81;
 }
+
+/* .bg-ellipses {
+  background-color: transparent!important;
+  background-repeat: no-repeat;
+  background-image: radial-gradient(#ffffff,rgba(149, 115, 177, 0.87) 70%,transparent 70.1%);
+  background-size: 200% 150%;
+  background-position: bottom;
+} */
+
+/* .custom-bg-ellipses {
+  background: rgb(45,50,62);
+background: linear-gradient(90deg, rgba(45,50,62,1) 0%, rgba(62,76,91,1) 35%, rgba(255,255,255,1) 100%);
+} */

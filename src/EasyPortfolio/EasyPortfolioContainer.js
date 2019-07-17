@@ -1,6 +1,19 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 
 import React from "react";
-import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation, MDBAlert, Animation, MDBIcon, MDBModal, MDBModalBody, MDBModalHeader } from "mdbreact";
+import {
+    MDBBtn,
+    MDBContainer,
+    MDBRow,
+    MDBCol,
+    MDBAnimation,
+    MDBAlert,
+    Animation,
+    MDBIcon,
+    MDBModal,
+    MDBModalBody,
+    MDBModalHeader
+} from "mdbreact";
 import ShowPieChart from "./PieChart";
 import AssetSlider from "./AssetSlider";
 import {getCurrentAssets, computeTrades} from "./Helpers"
@@ -13,18 +26,13 @@ import ToggleSwitch from "./ToggleSwitch";
 import NoWebThree from "./NoWebThree";
 import isMobile from "react-device-detect";
 
-
 var NETWORK_URL = "";
-// const NETWORK_URL = "https://ropsten-api.kyber.network"
-// const NETWORK_URL = "https://api.kyber.network";
-// convert to full web3 - https://medium.com/easwap/dex-in-15-days-144b71166e73
-
-//Shortcuts clg-> console.log(object)
-// cmd+b to remove left side panel
-// cmd+p to find file
-// select then cmd + shift + b for beatify
-// cmd+k then z for zen mode
-// shift+ cmd + M for problems menu
+// const NETWORK_URL = "https://ropsten-api.kyber.network" const NETWORK_URL =
+// "https://api.kyber.network"; convert to full web3 -
+// https://medium.com/easwap/dex-in-15-days-144b71166e73 Shortcuts clg->
+// console.log(object) cmd+b to remove left side panel cmd+p to find file select
+// then cmd + shift + b for beatify cmd+k then z for zen mode 
+//shift+  cmd + M for problems menu 
 
 const web3 = new Web3(Web3.givenProvider);
 var globalTokenPriceInfo = {};
@@ -33,87 +41,109 @@ var DEBUG = false;
 
 async function fetchPriceInfo() {
     globalTokenPriceInfo = await getMarketInformation('PRICE_INFO', NETWORK_URL);
-
-    console.log('Price info: ');
-    console.log(globalTokenPriceInfo)
-
+    // console.log('Price info: '); console.log(globalTokenPriceInfo)
     return globalTokenPriceInfo;
 }
-
 
 async function init(that) {
 
     try {
-        var ethAccounts = await web3.eth.requestAccounts(); 
+        var ethAccounts = await web3
+            .eth
+            .requestAccounts();
 
-        if(ethAccounts.length === 0) {
+        if (ethAccounts.length === 0) {
             console.log('Throw error for old web3 impl, should still work and continue..')
-            throw {err:"noAccount"}()
+            throw {
+                err : "noAccount"
+            }()
         }
     } catch (err) {
-        console.log("requestAccounts failed, Works fine still for older web3 implementations")
+        console.log(
+            "requestAccounts failed, Works fine still for older web3 implementations"
+        )
     }
 
     var priceInfo = await fetchPriceInfo()
 
     that.addAvailTokens(priceInfo)
     getCurrentAssets(web3, priceInfo, that)
-    that.setState({ready:true})
+    that.setState({ready: true})
 }
 
 class EasyPortfolioContainer extends React.Component {
     constructor(props) {
-      super(props)
-  
-      this.state = {
-        assets: [],
-        modal: false,
-        settingsModal :false,
-        availTokens: [],
-        ready: false,
-        currentTrades: [],
-        currentApprovals: [],
-        tradeConfirmations : new Map(),
-        message : "",
-        trading : false,
-        totalPercentage : 100.0,
-        totalUsdValue: -1.0,
-        isChecked: true,
-        gtag: {}
-      }
+        super(props)
+
+        this.state = {
+            assets: [],
+            modal: false,
+            settingsModal: false,
+            availTokens: [],
+            ready: false,
+            currentTrades: [],
+            currentApprovals: [],
+            tradeConfirmations: new Map(),
+            message: "",
+            trading: false,
+            totalPercentage: 100.0,
+            totalUsdValue: -1.0,
+            isChecked: true,
+            showUsdIsChecked: true,
+            gtag: {},
+            finalLoadingCount : 0,
+            currentLoadingCount: 0
+        }
     }
 
     componentDidMount() {
 
-        // window.sessionStorage.setItem("mykey", "mainnet");
         this.gtag = window.gtag
 
-        const network = window.sessionStorage.getItem("network");
-        console.log('Current Network')
-        console.log(network)
+        const network = window
+            .sessionStorage
+            .getItem("network");
+        const showUsd = window
+            .sessionStorage
+            .getItem("showUsd");
+        console.log('Current Ethereum Network: ' + network)
+        console.log('Current Show Checked Option: ' + showUsd)
+
         if (network && network === "testnet") {
-            this.setState({isChecked:false})
+            this.setState({isChecked: false})
             NETWORK_URL = "https://ropsten-api.kyber.network"
         } else if (network && network === "mainnet") {
-            this.setState({isChecked:true})
+            this.setState({isChecked: true})
             NETWORK_URL = "https://api.kyber.network";
         } else {
-            this.setState({isChecked:true})
+            this.setState({isChecked: true})
             NETWORK_URL = "https://api.kyber.network";
         }
 
-        if(DEBUG) {
+        if(showUsd === true || showUsd === false) {
+            this.setState({showUsdIsChecked: showUsd})
+        }
+
+        if (DEBUG) {
             this.addTestAssets();
         } else if (web3 === undefined || web3.givenProvider === null) {
-            this.setState({ready:true})
-            this.setState({message:"noweb3"})
+            this.setState({ready: true})
+            this.setState({message: "noweb3"})
         } else {
-            init(this)   
+            init(this)
         }
-        
+
     }
 
-    
+    loadingStart = (number) => {
+        this.setState({finalLoadingCount: number})
+    }
+
+    loadingDone = () => {
+        var curCount = this.state.currentLoadingCount;
+        this.setState({currentLoadingCount: (curCount+1)})
+    }
+
     toggle = () => {
         this.setState({
             modal: !this.state.modal
@@ -128,25 +158,47 @@ class EasyPortfolioContainer extends React.Component {
 
     addAvailTokens(priceInfo) {
         var finalAvail = [];
-        for(var key in priceInfo) {
+        for (var key in priceInfo) {
             finalAvail.push(priceInfo[key].token_symbol)
         }
-        this.setState({availTokens:finalAvail})
+        this.setState({availTokens: finalAvail})
         return priceInfo;
     }
 
     refreshPage() {
-        window.location.reload();
+        window
+            .location
+            .reload();
     }
 
     addTestAssets() {
         var assets = [];
-        var ethAsset =  {"symbol" : "ETH", "tokenName" : "Ethereum", "tokenAddress" :  "abc", "amount" : .5, "pricePerAsset":200, "usdValue": 200 * .5, "newPercentUsdValue": 200 * .5, "currentPortfolioPercent" : 50, "newPortfolioPercent" : 50}
-        var daiAsset =  {"symbol" : "DAI", "tokenName" : "Dai", "tokenAddress" :  "abc", "amount" : 100, "pricePerAsset":1, "usdValue": 100 * 1, "newPercentUsdValue": 100 * 1, "currentPortfolioPercent" : 50, "newPortfolioPercent" : 50}
+        var ethAsset = {
+            "symbol": "ETH",
+            "tokenName": "Ethereum",
+            "tokenAddress": "abc",
+            "amount": .5,
+            "pricePerAsset": 200,
+            "usdValue": 200 * .5,
+            "newPercentUsdValue": 200 * .5,
+            "currentPortfolioPercent": 50,
+            "newPortfolioPercent": 50
+        }
+        var daiAsset = {
+            "symbol": "DAI",
+            "tokenName": "Dai",
+            "tokenAddress": "abc",
+            "amount": 100,
+            "pricePerAsset": 1,
+            "usdValue": 100 * 1,
+            "newPercentUsdValue": 100 * 1,
+            "currentPortfolioPercent": 50,
+            "newPortfolioPercent": 50
+        }
 
         assets.push(ethAsset)
         assets.push(daiAsset)
-        this.setState({ assets: assets });
+        this.setState({assets: assets});
     }
 
     changeSlider = (asset, value) => {
@@ -155,27 +207,33 @@ class EasyPortfolioContainer extends React.Component {
 
         var totalPercentage = 0;
         var totalUsdValue = 0;
-        for(var i = 0; i < this.state.assets.length; i ++) {
-          totalPercentage += this.state.assets[i].newPortfolioPercent;
-          totalUsdValue += this.state.assets[i].usdValue
+        for (var i = 0; i < this.state.assets.length; i++) {
+            totalPercentage += this
+                .state
+                .assets[i]
+                .newPortfolioPercent;
+            totalUsdValue += this
+                .state
+                .assets[i]
+                .usdValue
         }
 
-        if(totalPercentage > 100) {
-          asset.newPortfolioPercent = value - (totalPercentage - 100) ;
+        if (totalPercentage > 100) {
+            asset.newPortfolioPercent = value - (totalPercentage - 100);
         } else {
-          asset.newPortfolioPercent = value;
+            asset.newPortfolioPercent = value;
         }
 
         asset.newPercentUsdValue = totalUsdValue * (asset.newPortfolioPercent * .01)
         // this is needed, but not sure why..
-        this.setState({ assets: this.state.assets });
+        this.setState({assets: this.state.assets});
 
-        if(totalPercentage >= 100) {
+        if (totalPercentage >= 100) {
             totalPercentage = 100
         }
 
         this.setState({totalUsdValue: totalUsdValue})
-        this.setState({totalPercentage:totalPercentage})
+        this.setState({totalPercentage: totalPercentage})
     }
 
     addAsset(asset) {
@@ -183,14 +241,23 @@ class EasyPortfolioContainer extends React.Component {
     }
 
     handleSelect = e => {
-        for(var i = 0; i < this.state.assets.length; i ++) {
-            if(this.state.assets[i].symbol === e.target.value) {
+        for (var i = 0; i < this.state.assets.length; i++) {
+            if (this.state.assets[i].symbol === e.target.value) {
                 return;
             }
         }
 
         var token = "ETH_" + e.target.value;
-        var asset =  {"symbol" : e.target.value, "tokenAddress" :  globalTokenPriceInfo[token].token_address, "amount" : 0, "pricePerAsset":globalTokenPriceInfo[token].rate_usd_now, "usdValue": 0, "newPercentUsdValue": 0, "currentPortfolioPercent" : 0, "newPortfolioPercent" : 0}
+        var asset = {
+            "symbol": e.target.value,
+            "tokenAddress": globalTokenPriceInfo[token].token_address,
+            "amount": 0,
+            "pricePerAsset": globalTokenPriceInfo[token].rate_usd_now,
+            "usdValue": 0,
+            "newPercentUsdValue": 0,
+            "currentPortfolioPercent": 0,
+            "newPortfolioPercent": 0
+        }
         this.addAsset(asset)
     }
 
@@ -199,66 +266,72 @@ class EasyPortfolioContainer extends React.Component {
         currentAssets.push(asset);
 
         var totalUsdValue = 0;
-        for(var i = 0; i < currentAssets.length; i ++) {
-          totalUsdValue += currentAssets[i].usdValue;
+        for (var i = 0; i < currentAssets.length; i++) {
+            totalUsdValue += currentAssets[i].usdValue;
         }
 
-        for(var j = 0; j < currentAssets.length; j++) {
-            currentAssets[j].currentPortfolioPercent = ((currentAssets[j].usdValue / totalUsdValue) * 100.0);
-            currentAssets[j].newPortfolioPercent = ((currentAssets[j].usdValue / totalUsdValue) * 100.0);
+        for (var j = 0; j < currentAssets.length; j++) {
+            currentAssets[j].currentPortfolioPercent = (
+                (currentAssets[j].usdValue / totalUsdValue) * 100.0
+            );
+            currentAssets[j].newPortfolioPercent = (
+                (currentAssets[j].usdValue / totalUsdValue) * 100.0
+            );
         }
 
-        this.setState({ assets: currentAssets });
-        this.setState({totalUsdValue : totalUsdValue})
+        this.setState({assets: currentAssets});
+        this.setState({totalUsdValue: totalUsdValue})
     }
 
     startKyberTrade = () => {
-        
+
         var trades = computeTrades(this.state.assets);
 
-        if(trades.length ===0) {
+        if (trades.length === 0) {
             return;
         }
 
         this.toggle();
-        this.setState({trading:true})
+        this.setState({trading: true})
 
-        this.setState({currentTrades:trades})
+        this.setState({currentTrades: trades})
 
-        console.log('Performing trades: ');
-        console.log(trades)
+        // console.log('Performing trades: ');
+        // console.log(trades)
 
         try {
             this.gtag('event', 'clickBalanceReal', {
                 'event_category': 'clickBalanceRealCategory',
                 'event_label': 'clickBalanceRealLabel',
                 'transport_type': 'beacon',
-                'event_callback': function(){/*document.location = url;*/}
-                //'event_callback': function(){document.location = url;}
+                'event_callback': function () {}
             });
-        } catch(e) {
+        } catch (e) {}
 
-        }
-
-        startTrade(web3, trades, GAS_PRICE, this.txToCompleteCallback, this.approvalsCallback, NETWORK_URL);
-      }
+        startTrade(
+            web3,
+            trades,
+            GAS_PRICE,
+            this.txToCompleteCallback,
+            this.approvalsCallback,
+            NETWORK_URL
+        );
+    }
 
     txToCompleteCallback = (type, data, trade) => {
 
-        console.log("txToCompleteCallback");
-        console.log(type);
-        console.log(data);
-        console.log(trade);
         var tc = this.state.tradeConfirmations;
 
-        if(type === "transactionHash") {
-            tc.set(trade,"tx-" + data)
+        if (type === "transactionHash") {
+            tc.set(trade, "tx-" + data)
         } else if (type === "confirmation") {
-            var hash = tc.get(trade).split('-')[1]
-            tc.set(trade,"comf-"+hash)
+            var hash = tc
+                .get(trade)
+                .split('-')[1]
+            tc.set(trade, "comf-" + hash)
         }
-        
-        this.setState({tradeConfirmations:tc})
+
+        this.setState({tradeConfirmations: tc})
     }
 
     approvalsCallback = (token) => {
@@ -268,170 +341,248 @@ class EasyPortfolioContainer extends React.Component {
         this.setState({currentApprovals: approvals})
     }
 
+
+    showUsdToggleSwitch = () => {
+        window.sessionStorage.setItem("showUsd", !this.state.showUsdIsChecked);
+        this.setState({showUsdIsChecked:!this.state.showUsdIsChecked})
+    }
+
     toggleSwitch = () => {
-        console.log('toggle switch called')
-        if(this.state.isChecked === true) {
-            window.sessionStorage.setItem("network", "testnet");
+        if (this.state.isChecked === true) {
+            window
+                .sessionStorage
+                .setItem("network", "testnet");
         }
 
-        if(this.state.isChecked === false) {
-            window.sessionStorage.setItem("network", "mainnet");
+        if (this.state.isChecked === false) {
+            window
+                .sessionStorage
+                .setItem("network", "mainnet");
         }
 
         this.refreshPage();
     }
 
     render() {
-        
-        var textAlignCenter = {"textAlign" :"center" }
+
+        var textAlignCenter = {
+            "textAlign": "center"
+        }
         var buttonToRender;
+        var showUsdRender;
         var animationTypeLeft = "slideInLeft";
         var animationTypeRight = "slideInRight";
 
-        // isMobile = true;
-
-        if(isMobile) {
+        if (isMobile) {
             animationTypeLeft = "flipInX";
             animationTypeRight = "flipInX";
         }
-        
 
-        if(this.state.ready === false) {
+        if (this.state.ready === false) {
             return <LoadingPage/>
         }
 
-        if(this.state.message === "noweb3") {
+        if (this.state.message === "noweb3") {
             return <NoWebThree/>
         }
 
-        if(this.state.trading) {
-            buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.toggle} color="indigo"><Animation type="pulse" infinite>Balancing in progress...</Animation></MDBBtn>
+        if(this.state.showUsdIsChecked) {
+            if(this.state.totalUsdValue === -1.0) {
+                showUsdRender = <div key="usdvalue" className="spinner-border text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
+            } else {
+                showUsdRender = <p style={textAlignCenter}>USD Value: ${Math.round(this.state.totalUsdValue * 100) / 100}</p>
+            }
+        }
+
+        if (this.state.trading) {
+            buttonToRender = <MDBBtn
+                data-toggle="modal"
+                data-target="#exampleModalCenter"
+                onClick={this.toggle}
+                color="indigo">
+                <Animation type="pulse" infinite="infinite">Balancing in progress...</Animation>
+            </MDBBtn>
 
         } else {
-            if(this.state.totalPercentage >= 99.99) {
-                buttonToRender = <MDBBtn data-toggle="modal" data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="indigo">Rebalance</MDBBtn>
+            if (this.state.totalPercentage >= 99.99) {
+                buttonToRender = <MDBBtn
+                    data-toggle="modal"
+                    data-target="#exampleModalCenter"
+                    onClick={this.startKyberTrade}
+                    color="indigo">Rebalance</MDBBtn>
 
             } else {
-                buttonToRender = <MDBBtn data-toggle="modal" disabled data-target="#exampleModalCenter" onClick = {this.startKyberTrade} color="indigo">Rebalance</MDBBtn>
+                buttonToRender = <MDBBtn
+                    data-toggle="modal"
+                    disabled
+                    data-target="#exampleModalCenter"
+                    onClick={this.startKyberTrade}
+                    color="indigo">Rebalance</MDBBtn>
             }
         }
 
         return (
-            
-            <MDBContainer className = "h-100">
 
-            <MDBModal isOpen={this.state.settingsModal} toggle={this.settingsToggle} centered>
-                <MDBModalHeader>Settings</MDBModalHeader>
-                <MDBModalBody>
-                    <MDBRow className = "h-100 align-items-center">
-                        <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
-                            <ToggleSwitch toggleSwitch={this.toggleSwitch} checked = {this.state.isChecked}/>
-                            {this.state.isChecked ? <p>Mainnet</p> : <p>Ropsten</p> }
-                        </MDBCol>
-                    </MDBRow>
-                </MDBModalBody>
-            </MDBModal>
-            
-                <MyModal currentApprovals={this.state.currentApprovals} modal={this.state.modal} toggle={this.toggle} tradeConfirmations={this.state.tradeConfirmations} currentTrades={this.state.currentTrades}/>
+            <MDBContainer className="h-100 custom-bg-ellipses" >
 
-                {this.state.message === "" ?  
-                ""
-                :
-                <MDBAlert color="success">
-                    {/* {consoleItems} */}
-                    {this.state.message}
-                </MDBAlert>
+                <MDBModal
+                    isOpen={this.state.settingsModal}
+                    toggle={this.settingsToggle}
+                    centered>
+                    <MDBModalHeader>Settings</MDBModalHeader>
+                    <MDBModalBody>
+                        <MDBRow className="h-100 align-items-center">
+                            <MDBCol
+                                style={{
+                                    "textAlign" : "center",
+                                    "paddingTop" : "40px"
+                                }}>
+                                <ToggleSwitch toggleSwitch={this.showUsdToggleSwitch} checked={this.state.showUsdIsChecked}/> {
+                                    this.state.showUsdIsChecked
+                                        ? <p>Show USD Amount</p>
+                                        : <p>Don't Show USD Amount</p>
+                                }
+                            </MDBCol>
+                        </MDBRow>
+
+                        <MDBRow className="h-100 align-items-center">
+                            <MDBCol
+                                style={{
+                                    "textAlign" : "center",
+                                    "paddingTop" : "40px"
+                                }}>
+                                <ToggleSwitch toggleSwitch={this.toggleSwitch} checked={this.state.isChecked}/> {
+                                    this.state.isChecked
+                                        ? <p>Mainnet</p>
+                                        : <p>Ropsten</p>
+                                }
+                            </MDBCol>
+                        </MDBRow>
+                    </MDBModalBody>
+                </MDBModal>
+
+                <MyModal
+                    currentApprovals={this.state.currentApprovals}
+                    modal={this.state.modal}
+                    toggle={this.toggle}
+                    tradeConfirmations={this.state.tradeConfirmations}
+                    currentTrades={this.state.currentTrades}/> {
+                    this.state.message === ""
+                        ? ""
+                        : <MDBAlert color="success">
+                                {this.state.message}
+                            </MDBAlert>
                 }
 
-                {this.state.totalUsdValue === 0 ?
-                <MDBAlert color="success">
-                <MDBRow className = "h-100 align-items-center">
-                <MDBCol style={textAlignCenter}>
-                    <h1>Don't be a filty nocoiner!</h1>
-                    <a rel="noopener noreferrer" target= "_blank" href = "https://www.coinbase.com"> <h2>Buy Ethereum <MDBIcon icon="space-shuttle" /> </h2>  </a>
-                    </MDBCol>
-                    </MDBRow>
-                </MDBAlert>
-                :
-                ""
-                } 
+                {
+                    this.state.totalUsdValue === 0
+                        ? <MDBAlert color="success">
+                                <MDBRow className="h-100 align-items-center">
+                                    <MDBCol style={textAlignCenter}>
+                                        <h1>Don't be a filty nocoiner!</h1>
+                                        <a rel="noopener noreferrer" target="_blank" href="https://www.coinbase.com">
+                                            <h2>Buy Ethereum
+                                                <MDBIcon icon="space-shuttle"/>
+                                            </h2>
+                                        </a>
+                                    </MDBCol>
+                                </MDBRow>
+                            </MDBAlert>
+                        : ""
+                }
 
-                <MDBRow className = "h-100 align-items-center">
-                    {/* <MDBAnimation type="slideInLeft"> */}
-                        <MDBCol md="4">
+                <MDBRow className="h-100 align-items-center">
+
+                    <MDBCol md="4">
                         <MDBAnimation type={animationTypeLeft}>
-                            <div className = "logo">
-                                {/* cryptofolio */}
-                                {/* <a href = {"/"} > <h1>Tokenfolio</h1> </a> */}
-                                <img class="img-fluid" alt = "Tokenfolio logo" src ="tflogo.png"></img>
-                                <ShowPieChart assets = {this.state.assets}/>
-                                {this.state.usdValue === -1 ?
-                                <div key = "usdvalue" className="spinner-border text-primary" role="status">
-                                <span className="sr-only">Loading...</span>
-                                </div>
-                                :       
-                                <p style = {textAlignCenter} >USD Value: ${Math.round(this.state.totalUsdValue * 100) / 100}</p>
-                                }
-                                {/* <a href = {"/"} ><img alt="tokenfolio" src="./tokenfolio-logo.png" ></img> </a> */}
-                                
+                            <div className="logo">
+                                <img className="img-fluid" alt="Tokenfolio logo" src="tflogo.png"></img>
+                                <ShowPieChart assets={this.state.assets}/> 
+                                {showUsdRender}
                             </div>
-                            </MDBAnimation>
-                        </MDBCol>
-                    {/* </MDBAnimation> */}
-
-                    <MDBCol md="8">
-                        <MDBAnimation type={animationTypeRight}>
-
-                            {/* <MDBRow className = "h-100 align-items-center">
-                                <MDBCol>
-                                    
-                                    <ShowPieChart assets = {this.state.assets}/>
-                                    <p style = {textAlignCenter} >USD Value: ${Math.round(this.state.totalUsdValue * 100) / 100}</p>
-                                </MDBCol>
-                            </MDBRow> */}
-
-                            <MDBRow className = "h-100 align-items-center">
-                                <MDBCol>
-                                    <SelectPage handleSelect = {this.handleSelect} availTokens = {this.state.availTokens}/>
-                                </MDBCol>
-                            </MDBRow>
-
-                            <MDBRow className = "h-100 align-items-center">
-                                <MDBCol>
-                                    <AssetSlider totalUsdValue = {this.state.totalUsdValue} totalPercentage={this.state.totalPercentage} changeSlider = {this.changeSlider} assets = {this.state.assets} />
-                                </MDBCol>
-                            </MDBRow>
-
-                            <MDBRow className = "h-100 align-items-center">
-                            
-                                <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
-                                <div style = {{"padding-left" : "20px"}}>
-                                    {buttonToRender}
-                                    <a style= {{"color": "#586b81"}} href="#" onClick={this.settingsToggle}><MDBIcon style={{"vertical-align": "bottom", "padding-bottom": "7px"}} color ="#586b81" icon="cog" /> </a>
-                                    </div>
-                                </MDBCol>
-                            </MDBRow>
-
-                            {/* <MDBRow className = "h-100 align-items-center">
-                                <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
-                                    <ToggleSwitch toggleSwitch={this.toggleSwitch} checked = {this.state.isChecked}/>
-                                    {this.state.isChecked ? <p>Mainnet</p> : <p>Ropsten</p> }
-                                </MDBCol>
-                            </MDBRow> */}
-
-                            <MDBRow className = "h-100 align-items-center">
-                            <MDBCol style = {{"textAlign": "center", "paddingTop" : "40px"}}>
-                            <p>Powered by <a href="https://kyber.network/" target="_blank">Kyber network</a></p>
-                            </MDBCol>
-                            </MDBRow>
-                            
                         </MDBAnimation>
                     </MDBCol>
 
-                    
+                    <MDBCol md="8">
+                        <MDBAnimation type={animationTypeRight}>
+                            <MDBRow className="h-100 align-items-center">
+                                <MDBCol>
+                                    <SelectPage
+                                        handleSelect={this.handleSelect}
+                                        availTokens={this.state.availTokens}/>
+                                </MDBCol>
+                            </MDBRow>
+
+                            <MDBRow className="h-100 align-items-center">
+                                <MDBCol>
+                                    <AssetSlider
+                                        totalUsdValue={this.state.totalUsdValue}
+                                        totalPercentage={this.state.totalPercentage}
+                                        changeSlider={this.changeSlider}
+                                        assets={this.state.assets}/>
+
+                                        {this.state.currentLoadingCount === (this.state.finalLoadingCount) ?
+                                            ""
+                                            :
+                                            <div className="centerthings">
+                                                <div key="usdvalue" className="spinner-border text-primary" role="status">
+                                                    <span className="sr-only">Loading...</span>
+                                                </div>
+                                                <p>{this.state.currentLoadingCount} / {this.state.finalLoadingCount}</p>
+                                            </div>
+                                        }
+
+                                </MDBCol>
+                            </MDBRow>
+
+                            <MDBRow className="h-100 align-items-center">
+
+                                <MDBCol
+                                    style={{
+                                        "textAlign" : "center",
+                                        "paddingTop" : "40px"
+                                    }}>
+                                    <div
+                                        style={{
+                                            "paddingLeft" : "20px"
+                                        }}>
+                                        {buttonToRender}
+                                        <a
+                                            style={{
+                                                "color" : "#586b81"
+                                            }}
+                                            href="#"
+                                            onClick={this.settingsToggle}><MDBIcon
+                                            style={{
+                        "verticalAlign" : "bottom",
+                        "paddingBottom" : "7px"
+                    }}
+                                            color="#586b81"
+                                            icon="cog"/>
+                                        </a>
+                                    </div>
+                                </MDBCol>
+                            </MDBRow>
+                            <MDBRow className="h-100 align-items-center">
+                                <MDBCol
+                                    style={{
+                                        "textAlign" : "center",
+                                        "paddingTop" : "40px"
+                                    }}>
+                                    <p>Powered by
+                                        <a rel="noopener noreferrer" href="https://kyber.network/" target="_blank"> Kyber network</a>
+                                    </p>
+                                </MDBCol>
+                            </MDBRow>
+
+                        </MDBAnimation>
+                    </MDBCol>
+
                 </MDBRow>
-                
-            </MDBContainer> 
+
+            </MDBContainer>
         );
     }
 }

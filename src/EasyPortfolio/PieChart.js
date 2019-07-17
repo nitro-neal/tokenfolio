@@ -6,28 +6,13 @@ class ShowPieChart extends React.Component {
   colorMap = new Map();
   
   render() {
-
-    // this.colorMap.set('BTC', 'orange');
-    // this.colorMap.set('WBTC', 'orange');
-    // this.colorMap.set('ETH', 'grey');
-    // this.colorMap.set('BAT', 'red');
-    // this.colorMap.set('DAI', 'yellow');
-    // this.colorMap.set('OMG','blue');
-
     var blueColors = []
-    blueColors.push("#16194e")
-    blueColors.push("#1f266b")
-    blueColors.push("#2c378f")
-
-    // blueColors.push("#034698");
-    // blueColors.push("#006CBB");
+    blueColors.push("#16194e");
+    blueColors.push("#1f266b");
+    blueColors.push("#2c378f");
     blueColors.push("#28A7EA");
     blueColors.push("#45BDEE");
     blueColors.push("#7AD6F4");
-
-    
-    // console.log('ASSETS: ')
-    // console.log(this.props.assets);
     
     var colors = []
     var assets = this.props.assets
@@ -48,11 +33,6 @@ class ShowPieChart extends React.Component {
 
     for (var i = 0; i < assets.length; i ++) {
       pieChartData.push([assets[i].symbol, assets[i].newPortfolioPercent]);
-      // if(this.colorMap.has(assets[i].symbol)) {
-      //   colors.push(this.colorMap.get(assets[i].symbol))
-      // } else {
-      //   colors.push('green')
-      // }
       if(blueColors.length > i) {
         colors.push(blueColors[i])
       } else {
@@ -61,15 +41,12 @@ class ShowPieChart extends React.Component {
     }
 
     var mySlices = {}
+    // eslint-disable-next-line no-redeclare
     for (var i = 0; i < colors.length; i ++) {
       mySlices[i] = { color: colors[i] };
     }
   
-    return (
-      
-
-      
-                                
+    return (                          
         <Chart
           // width={'400px'}
           height={'200px'}
