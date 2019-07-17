@@ -26,6 +26,9 @@ import ToggleSwitch from "./ToggleSwitch";
 import NoWebThree from "./NoWebThree";
 import isMobile from "react-device-detect";
 
+// import process from "process"
+// var util = require('util');
+
 var NETWORK_URL = "";
 // const NETWORK_URL = "https://ropsten-api.kyber.network" const NETWORK_URL =
 // "https://api.kyber.network"; convert to full web3 -
@@ -38,6 +41,12 @@ const web3 = new Web3(Web3.givenProvider);
 var globalTokenPriceInfo = {};
 var GAS_PRICE = 'low'
 var DEBUG = false;
+
+// function printMemoryUsage() {
+//     // const used = process.memoryUsage().heapUsed / (1024 * 1024);
+//     console.log("mem used")
+//     console.log(util.inspect(process.memoryUsage()));
+// }
 
 async function fetchPriceInfo() {
     globalTokenPriceInfo = await getMarketInformation('PRICE_INFO', NETWORK_URL);
@@ -133,6 +142,7 @@ class EasyPortfolioContainer extends React.Component {
             init(this)
         }
 
+        // printMemoryUsage();
     }
 
     loadingStart = (number) => {
@@ -199,6 +209,7 @@ class EasyPortfolioContainer extends React.Component {
         assets.push(ethAsset)
         assets.push(daiAsset)
         this.setState({assets: assets});
+        // printMemoryUsage();
     }
 
     changeSlider = (asset, value) => {

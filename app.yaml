@@ -11,16 +11,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# [START runtime]
 runtime: nodejs
 env: flex
+# [END runtime]
 
-manual_scaling:
-  instances: 1
-resources:
-  cpu: 1
-  memory_gb: 0.5
-  disk_size_gb: 10
-# [START gae_quickstart_yaml]
-#runtime: nodejs10
-#service: default
-# [END gae_quickstart_yaml]
+# [START handlers]
+handlers:
+ - url: /
+   static_files: build/index.html
+   upload: build/index.html
+
+ - url: /(.*)
+   static_files: build/\1
+   upload: build/(.*)
+# [END handlers]
