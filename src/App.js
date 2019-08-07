@@ -1,20 +1,18 @@
-import React from 'react';
-import './App.css';
-import EasyPortfolioContainer from './EasyPortfolio/EasyPortfolioContainer';
+import React from "react";
+import "./App.css";
+import EasyPortfolioContainer from "./EasyPortfolio/EasyPortfolioContainer";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import Tokenfolio from "./EasyPortfolio/components/Tokenfolio";
 
 function App() {
+  let binanceWorkflow = window.location.href.includes("binance") ? true : false;
+  let componentToRender = <EasyPortfolioContainer />;
 
-  return (
+  if (binanceWorkflow) {
+    componentToRender = <Tokenfolio binanceWorkflow={binanceWorkflow} />;
+  }
 
-    <EasyPortfolioContainer/>
-    // <Router>
-    // <h1>hi</h1>
-    // <Link to="/app/">Get Started</Link>
-
-    // <Route path="/app/" component={EasyPortfolioContainer} />
-    // </Router>
-  );
+  return componentToRender;
 }
 
 export default App;
