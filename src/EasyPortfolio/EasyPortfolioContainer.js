@@ -471,6 +471,20 @@ class EasyPortfolioContainer extends React.Component {
                                 }
                             </MDBCol>
                         </MDBRow>
+
+                        <MDBRow className="h-100 align-items-center">
+                            <MDBCol
+                                style={{
+                                textAlign: "center",
+                                paddingTop: "40px"
+                                }}
+                            >
+                                <a href="https://binance.tokenfolio.cc">
+                                {" "}
+                                Switch To Binance Chain{" "}
+                                </a>
+                            </MDBCol>
+                        </MDBRow>
                     </MDBModalBody>
                 </MDBModal>
 
