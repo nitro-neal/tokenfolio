@@ -25,6 +25,9 @@ class AssetSliders extends React.Component {
     colorMap.set("DAI", { backgroundColor: "yellow", borderColor: "yellow" });
     colorMap.set("OMG", { backgroundColor: "blue", borderColor: "blue" });
     colorMap.set("MANA", { backgroundColor: "green", borderColor: "green" });
+
+    colorMap.set("BNB", { backgroundColor: "yellow", borderColor: "yellow" });
+    colorMap.set("FTM", { backgroundColor: "blue", borderColor: "blue" });
   }
 
   render() {

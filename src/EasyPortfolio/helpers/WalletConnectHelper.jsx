@@ -1,9 +1,15 @@
 import WalletConnect from "@walletconnect/browser";
 import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
+const bridge = "https://wallet-bridge.binance.org";
+
+export function isWalletConnected() {
+  const walletConnector = new WalletConnect({ bridge });
+  window.walletConnector = walletConnector;
+
+  return walletConnector.connected;
+}
 
 export async function walletConnectInit(onConnectedCallback) {
-  const bridge = "https://wallet-bridge.binance.org";
-
   const walletConnector = new WalletConnect({ bridge });
   window.walletConnector = walletConnector;
 
