@@ -1,6 +1,15 @@
 import React, { Component } from "react";
 import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
-import { MDBBtn, MDBContainer, MDBRow, MDBCol, MDBAnimation } from "mdbreact";
+import {
+  MDBBtn,
+  MDBContainer,
+  MDBRow,
+  MDBCol,
+  MDBAnimation,
+  MDBCard,
+  MDBCardBody,
+  MDBCardTitle
+} from "mdbreact";
 
 import {
   walletConnectInit,
@@ -19,6 +28,8 @@ import RebalanceModal from "./RebalanceModal";
 
 import WalletSelector from "./WalletSelector";
 
+//import myData from "./data.json";
+
 const textAlignCenter = {
   textAlign: "center"
 };
@@ -30,6 +41,12 @@ const centerWithTopPadding = {
 
 const paddingLeft = {
   paddingLeft: "20px"
+};
+
+const walletSelectorCard = {
+  width: "62rem",
+  height: "24rem",
+  marginTop: "1rem"
 };
 
 const animationTypeLeft = "flipInX";
@@ -54,6 +71,11 @@ class Tokenfolio extends Component {
     this.init(this.props.binanceWorkflow);
     this.setState({ binanceWorkflow: this.props.binanceWorkflow });
     this.setState({ development: this.props.development });
+
+    // if (this.props.development) {
+    //   const myData = require("./data.json");
+    //   this.connectWithPrivateKey(myData.file, myData.p);
+    // }
   }
 
   init = async binanceWorkflow => {
@@ -256,11 +278,16 @@ class Tokenfolio extends Component {
             <MDBAnimation type={animationTypeRight}>
               {!this.state.connected ? (
                 <MDBRow className="h-100 align-items-center">
-                  <MDBCol>
-                    <WalletSelector
-                      walletFileUploaded={this.walletFileUploaded}
-                    />
-                  </MDBCol>
+                  <MDBCard style={walletSelectorCard}>
+                    <MDBCardBody>
+                      <MDBCardTitle>Unlock Your Wallet</MDBCardTitle>
+                      <MDBCol>
+                        <WalletSelector
+                          walletFileUploaded={this.walletFileUploaded}
+                        />
+                      </MDBCol>
+                    </MDBCardBody>
+                  </MDBCard>
                 </MDBRow>
               ) : (
                 <>

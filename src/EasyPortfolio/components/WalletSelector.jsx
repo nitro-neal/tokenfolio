@@ -5,12 +5,6 @@ import FileInput from "./FileInput";
 import { MDBContainer } from "mdbreact";
 
 class WalletSelector extends Component {
-  state = {
-    items: {
-      default: "1"
-    }
-  };
-
   render() {
     return (
       <MDBContainer className="mt-4">
