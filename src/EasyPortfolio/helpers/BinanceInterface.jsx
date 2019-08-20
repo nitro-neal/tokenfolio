@@ -36,6 +36,16 @@ export async function getBnbBalncesAndMarkets(address) {
   console.log("current prices");
   console.log(currentPrices);
 
+  let symbolMap = new Map();
+
+  const availableTokensWithNames = await axios.get(
+    "https://dex.binance.org/api/v1/tokens"
+  );
+
+  availableTokensWithNames.data.forEach(token => {
+    symbolMap.set(token.symbol, token.name);
+  });
+
   const bnbPrice = parseFloat(
     currentPrices.data.filter(asset => asset.symbol === "BNB_USDSB-1AC")[0]
       .lastPrice
@@ -61,12 +71,12 @@ export async function getBnbBalncesAndMarkets(address) {
     }
   });
 
-  currentPrices = computeInitialPercentages(currentPrices);
+  currentPrices = computeInitialPercentages(currentPrices, symbolMap);
 
   return currentPrices;
 }
 
-function computeInitialPercentages(currentPrices) {
+function computeInitialPercentages(currentPrices, symbolMap) {
   let totalUsdValue = 0;
   currentPrices.forEach(asset => {
     totalUsdValue += asset.currentUsdPrice * asset.myBalance;
@@ -82,6 +92,7 @@ function computeInitialPercentages(currentPrices) {
     } else {
       asset.newPortfolioPercent = 0;
       asset.currentPortfolioPercent = 0;
+      // TODO: Chagne me to false
       asset.inMyPortfolio = false;
     }
 
@@ -92,6 +103,7 @@ function computeInitialPercentages(currentPrices) {
     );
 
     asset.friendlyName = friendlyName;
+    asset.realName = symbolMap.get(asset.baseAssetName);
   });
 
   return currentPrices;
@@ -112,9 +124,6 @@ export function computeTrades(stateAssets) {
     //   assets[iter].newPercentUsdValue - assets[iter].usdValue;
     assets[iter].usdNeeded =
       getNewUsdValue(assets, assets[iter]) - getCurrentUsdValue(assets[iter]);
-    console.log(assets[iter].usdNeeded);
-    console.log(assets[iter].newPercentUsdValue);
-    console.log(getNewUsdValue(assets, assets[iter]));
   }
 
   for (var i = 0; i < assets.length; i++) {
@@ -128,7 +137,6 @@ export function computeTrades(stateAssets) {
     }
 
     for (var j = 0; j < assets.length; j++) {
-      console.log(assets[j]);
       if (
         assets[i].usdNeeded < 0 &&
         assets[j].usdNeeded > 0 &&
@@ -169,15 +177,24 @@ export function computeTrades(stateAssets) {
 
         trade.otherTokenRecieveAmount =
           (trade.amount * assets[i].pricePerAsset) / assets[j].pricePerAsset;
-        trades.push(trade);
+
+        if (trade.usdAmount > 0.000001) {
+          trades.push(trade);
+        }
       }
     }
   }
 
   console.log(trades);
+
   trades.forEach(trade => {
     console.log(
-      "Trade: $" + trade.usdAmount + " " + trade.from + " => " + trade.to
+      "Trades Computed: $" +
+        trade.usdAmount +
+        " " +
+        trade.from +
+        " => " +
+        trade.to
     );
   });
 
@@ -224,6 +241,11 @@ async function getLotSizes() {
   return marketData.data;
 }
 
+function round_to_precision(x, precision) {
+  var y = +x + (precision === undefined ? 0.5 : precision / 2);
+  return y - (y % (precision === undefined ? 1 : +precision));
+}
+
 async function placeTrade(
   address,
   trades,
@@ -261,7 +283,11 @@ async function placeTrade(
     let rawQuantity = getQantity(trades[i].usdAmount, asset);
 
     if (assetLotSize < 1) {
-      quantityRoundedToLotSize = Math.round(rawQuantity);
+      // quantityRoundedToLotSize = Math.round(rawQuantity);
+      quantityRoundedToLotSize = round_to_precision(
+        rawQuantity,
+        parseFloat(assetLotSize)
+      );
     } else {
       quantityRoundedToLotSize =
         Math.round(rawQuantity / parseInt(assetLotSize)) *
@@ -277,6 +303,13 @@ async function placeTrade(
         asset.baseAssetName
       } address : ${address} symbolMarketPair : ${symbolMarketPair}  buyOrSell : ${buyOrSell}  assetPrice : ${assetPrice}  rawQuantity : ${rawQuantity} quantityRoundedToLotSize : ${quantityRoundedToLotSize}  sequenceNumber : ${sequenceNumber}  timeInForce : ${timeInForce} `
     );
+
+    if (quantityRoundedToLotSize < 0.001) {
+      console.log("LOT SIZE TOO SMALL");
+      let orderReceipt = { error: "lotSizeError" };
+      confirmationCallback(orderReceipt);
+      return;
+    }
 
     try {
       // docs - https://github.com/binance-chain/javascript-sdk/tree/master/docs#module_client.BncClient+placeOrder
@@ -308,24 +341,17 @@ export async function tradeOnBnbChain(
 ) {
   //docs -= https://docs.binance.org/trading-spec.html#tick-size-and-lot-size
 
-  // Do all bnb gainers first (ftm => bnb)
-  // Three types of trades TO bnb, From bnb, or token to token
-
-  //   const bnbPrice = parseFloat(
-  //     currentPrices.data.filter(asset => asset.symbol === "BNB_USDSB-1AC")[0]
-  //       .lastPrice
-  //   );
-
   let marketDataWithLotSizes = await getLotSizes();
   let fromBnbTrades = trades.filter(trade => trade.from === "BNB_USDSB-1AC");
   let toBnbTrades = trades.filter(trade => trade.to === "BNB_USDSB-1AC");
+  let tokenToTokenTrades = trades.filter(
+    trade => trade.to !== "BNB_USDSB-1AC" && trade.from !== "BNB_USDSB-1AC"
+  );
 
-  console.log(fromBnbTrades);
+  console.log("tokenToTokenTrades");
+  console.log(tokenToTokenTrades);
 
-  console.log("lot sizes");
-  console.log(marketDataWithLotSizes);
-
-  placeTrade(
+  await placeTrade(
     address,
     fromBnbTrades,
     assets,
@@ -333,7 +359,7 @@ export async function tradeOnBnbChain(
     true,
     confirmationCallback
   );
-  placeTrade(
+  await placeTrade(
     address,
     toBnbTrades,
     assets,
@@ -341,4 +367,34 @@ export async function tradeOnBnbChain(
     false,
     confirmationCallback
   );
+
+  // create from and to orders from token to token
+  for (let i = 0; i < tokenToTokenTrades.length; i++) {
+    let trade = tokenToTokenTrades[i];
+    let toBnbTrade = [];
+    toBnbTrade.push(JSON.parse(JSON.stringify(trade)));
+    toBnbTrade[0].to = "BNB_USDSB-1AC";
+
+    await placeTrade(
+      address,
+      toBnbTrade,
+      assets,
+      marketDataWithLotSizes,
+      false,
+      confirmationCallback
+    );
+
+    let fromBnbTrade = [];
+    fromBnbTrade.push(JSON.parse(JSON.stringify(trade)));
+    fromBnbTrade[0].from = "BNB_USDSB-1AC";
+
+    await placeTrade(
+      address,
+      fromBnbTrade,
+      assets,
+      marketDataWithLotSizes,
+      true,
+      confirmationCallback
+    );
+  }
 }

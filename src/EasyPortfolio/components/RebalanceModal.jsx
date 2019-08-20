@@ -9,6 +9,7 @@ import {
   MDBCol,
   Animation,
   MDBIcon,
+  MDBBtn,
   MDBAlert
 } from "mdbreact";
 
@@ -25,7 +26,10 @@ class RebalanceModal extends Component {
   state = {};
   render() {
     let currentTrades = [];
-    let finished = this.props.confirmations.includes(false) ? false : true;
+    let confirmationsBools = this.props.confirmations.flatMap(conf => {
+      return conf.complete;
+    });
+    let finished = confirmationsBools.includes(false) ? false : true;
 
     // let confirmed = [true, false, false];
 
@@ -54,7 +58,7 @@ class RebalanceModal extends Component {
               />
             </MDBCol>
             <MDBCol size={"3"}>
-              {this.props.confirmations[index] === false ? (
+              {this.props.confirmations[index].complete === false ? (
                 <div
                   key={trade.from + "-" + trade.to}
                   className="spinner-border text-primary"
@@ -86,13 +90,23 @@ class RebalanceModal extends Component {
               )}
             </MDBCol>
             <MDBCol size={"1"}>
-              <a
-                rel="noopener noreferrer"
-                target="_blank"
-                href={"https://etherscan.io/tx/"}
-              >
-                <MDBIcon icon="external-link-alt" />
-              </a>
+              {this.props.confirmations[index].error === true ? (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://docs.binance.org/faq.html#what-are-the-tick-size-and-lot-size-are-they-fixed"
+                >
+                  <MDBIcon icon="exclamation-triangle" />
+                </a>
+              ) : (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={this.props.confirmations[index].url}
+                >
+                  <MDBIcon icon="external-link-alt" />
+                </a>
+              )}
             </MDBCol>
           </MDBRow>
         </MDBAnimation>
@@ -122,7 +136,9 @@ class RebalanceModal extends Component {
                 </MDBRow>
                 <MDBRow style={{ textAlign: "center" }}>
                   <MDBCol size={"12"}>
-                    <a href="/">Balance Again?</a>
+                    <MDBBtn onClick={this.props.reset} color="indigo">
+                      Balance Again?
+                    </MDBBtn>
                   </MDBCol>
                 </MDBRow>
               </MDBAnimation>

@@ -2,6 +2,7 @@ import WalletConnect from "@walletconnect/browser";
 import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
 const bridge = "https://wallet-bridge.binance.org";
 
+// Documentation for binance transcations - https://docs.binance.org/encoding.html
 export function isWalletConnected() {
   const walletConnector = new WalletConnect({ bridge });
   window.walletConnector = walletConnector;

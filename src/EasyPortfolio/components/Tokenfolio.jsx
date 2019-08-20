@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import WalletConnectQRCodeModal from "@walletconnect/qrcode-modal";
 import {
   MDBBtn,
@@ -52,30 +53,32 @@ const walletSelectorCard = {
 const animationTypeLeft = "flipInX";
 const animationTypeRight = "flipInX";
 
+const INITIAL_STATE = {
+  file: null,
+  password: null,
+  binanceWorkflow: false,
+  walletConnector: null,
+  binanceAssets: [],
+  binanceAddress: "",
+  rebalanceModal: false,
+  currentTrades: [],
+  confirmations: [],
+  connected: false,
+  development: false
+};
+
 class Tokenfolio extends Component {
-  state = {
-    file: null,
-    password: null,
-    binanceWorkflow: false,
-    walletConnector: null,
-    binanceAssets: [],
-    binanceAddress: "",
-    rebalanceModal: false,
-    currentTrades: [],
-    confirmations: [],
-    connected: false,
-    development: false
-  };
+  state = { ...INITIAL_STATE };
 
   componentDidMount() {
     this.init(this.props.binanceWorkflow);
     this.setState({ binanceWorkflow: this.props.binanceWorkflow });
     this.setState({ development: this.props.development });
 
-    // if (this.props.development) {
-    //   const myData = require("./data.json");
-    //   this.connectWithPrivateKey(myData.file, myData.p);
-    // }
+    if (this.props.development) {
+      const myData = require("./data.json");
+      this.connectWithPrivateKey(myData.file, myData.p);
+    }
   }
 
   init = async binanceWorkflow => {
@@ -123,15 +126,13 @@ class Tokenfolio extends Component {
     let address = connectWithPrivateKey(fileContents, password);
     this.setState({ binanceAddress: address });
     this.setState({ connected: true });
+    this.setState({ file: fileContents });
+    this.setState({ password: password });
     this.initBinanceWorkflow(address);
   };
 
   walletHasConnected = payload => {
     WalletConnectQRCodeModal.close();
-
-    console.log("my paylaod");
-    console.log("TODO: set address and wallet connector");
-
     this.initBinanceWorkflow();
   };
 
@@ -194,12 +195,22 @@ class Tokenfolio extends Component {
     this.setState({ binanceAssets: this.state.binanceAssets });
   };
 
+  reset = async () => {
+    let file = this.state.file;
+    let password = this.state.password;
+
+    await this.setState({ ...INITIAL_STATE });
+
+    this.connectWithPrivateKey(file, password);
+  };
+
   startTrade = () => {
     let trades = computeTrades(this.state.binanceAssets);
     let confirmations = [];
 
     for (let i = 0; i < trades.length; i++) {
-      confirmations.push(false);
+      let confirmationShell = { complete: false };
+      confirmations.push(confirmationShell);
     }
 
     this.setState({ currentTrades: trades });
@@ -213,17 +224,19 @@ class Tokenfolio extends Component {
       this.state.binanceAssets,
       this.confirmationCallback
     );
-
-    setTimeout(this.startCountdownConfirmations, 2000);
-    setTimeout(this.startCountdownConfirmations, 4000);
-    setTimeout(this.startCountdownConfirmations, 6000);
-    setTimeout(this.startCountdownConfirmations, 7000);
   };
 
   toggleRebalanceModal = () => {
     this.setState({
       rebalanceModal: !this.state.rebalanceModal
     });
+  };
+
+  dummyCountdown = () => {
+    this.setTimeout(this.startCountdownConfirmations, 2000);
+    this.setTimeout(this.startCountdownConfirmations, 4000);
+    this.setTimeout(this.startCountdownConfirmations, 6000);
+    this.setTimeout(this.startCountdownConfirmations, 7000);
   };
 
   startCountdownConfirmations = () => {
@@ -240,16 +253,63 @@ class Tokenfolio extends Component {
     }
   };
 
-  confirmationCallback = confimation => {
+  confirmationCallback = async confimation => {
+    const sleep = milliseconds => {
+      return new Promise(resolve => setTimeout(resolve, milliseconds));
+    };
+
+    let confs = this.state.confirmations;
+
+    if (confimation.error === "lotSizeError") {
+      for (let i = 0; i < confs.length; i++) {
+        if (confs[i].complete === false) {
+          confs[i].complete = true;
+          confs[i].error = true;
+          confs[i].url = "Need Bigger Lot Size";
+          this.setState({
+            confirmations: confs
+          });
+          return;
+        }
+      }
+    }
+
     //https://explorer.binance.org/tx/161EABE0CB619BE642757E20A544BA95341F6FB0F8576D3A841421128C576596
-    console.log("tokenfolio callback");
-    //works
-    // console.log(confimation.result[0].data);
+
+    let orderId = JSON.parse(confimation.result[0].data).order_id;
+
+    let orderDetails;
+    orderDetails = await axios.get(
+      `https://dex.binance.org/api/v1/orders/${orderId}`
+    );
+
+    if (orderDetails.data === "" || orderDetails.data === undefined) {
+      await sleep(1000);
+      orderDetails = await axios.get(
+        `https://dex.binance.org/api/v1/orders/${orderId}`
+      );
+    }
+
+    for (let i = 0; i < confs.length; i++) {
+      if (confs[i].complete === false) {
+        confs[i].complete = true;
+        confs[i].error = false;
+        confs[i].url = `https://explorer.binance.org/tx/${
+          orderDetails.data.transactionHash
+        }`;
+        this.setState({
+          confirmations: confs
+        });
+        return;
+      }
+    }
   };
+
   render() {
     return (
       <MDBContainer className="h-100 custom-bg-ellipses">
         <RebalanceModal
+          reset={this.reset}
           currentTrades={this.state.currentTrades}
           confirmations={this.state.confirmations}
           toggle={this.toggleRebalanceModal}

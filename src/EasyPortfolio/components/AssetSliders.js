@@ -53,7 +53,8 @@ class AssetSliders extends React.Component {
         imageSymbol: asset.symbol.substring(
           0,
           nLogo !== -1 ? nLogo : asset.symbol.length
-        )
+        ),
+        realName: asset.realName
       };
     });
 
@@ -100,7 +101,7 @@ class AssetSliders extends React.Component {
                   {" "}
                   <p style={textAlignLeft} className="herotext">
                     {" "}
-                    {asset.tokenName} ({asset.symbol}){" "}
+                    {asset.realName} ({asset.symbol}){" "}
                   </p>
                 </MDBCol>
                 <MDBCol size={"3"}>
