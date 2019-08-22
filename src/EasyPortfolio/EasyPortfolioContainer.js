@@ -506,7 +506,7 @@ class EasyPortfolioContainer extends React.Component {
                         ? <MDBAlert color="success">
                                 <MDBRow className="h-100 align-items-center">
                                     <MDBCol style={textAlignCenter}>
-                                        <h1>Don't be a filty nocoiner!</h1>
+                                        <h1>Don't be a filthy nocoiner!</h1>
                                         <a rel="noopener noreferrer" target="_blank" href="https://www.coinbase.com">
                                             <h2>Buy Ethereum
                                                 <MDBIcon icon="space-shuttle"/>
