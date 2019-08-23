@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Tab, Tabs } from "react-bootstrap";
 import FileInput from "./FileInput";
 
-import { MDBContainer } from "mdbreact";
+import { MDBContainer, MDBBtn } from "mdbreact";
 
 class WalletSelector extends Component {
   render() {
@@ -21,7 +21,9 @@ class WalletSelector extends Component {
               Recommended Supported Wallets: <span>Trust Wallet </span>
             </p>
 
-            <h1>Coming Soon</h1>
+            <MDBBtn onClick={this.props.clickWalletConnect} color="indigo">
+              Get WalletConnect QR Code
+            </MDBBtn>
           </Tab>
         </Tabs>
       </MDBContainer>

@@ -29,8 +29,6 @@ import RebalanceModal from "./RebalanceModal";
 
 import WalletSelector from "./WalletSelector";
 
-//import myData from "./data.json";
-
 const textAlignCenter = {
   textAlign: "center"
 };
@@ -75,18 +73,17 @@ class Tokenfolio extends Component {
     this.setState({ binanceWorkflow: this.props.binanceWorkflow });
     this.setState({ development: this.props.development });
 
-    if (this.props.development) {
-      const myData = require("./data.json");
-      this.connectWithPrivateKey(myData.file, myData.p);
-    }
+    // if (this.props.development) {
+    //   const myData = require("./data.json");
+    //   this.connectWithPrivateKey(myData.file, myData.p);
+    // }
   }
 
   init = async binanceWorkflow => {
     if (binanceWorkflow) {
-      this.setState({ connected: isWalletConnected() });
-
       if (isWalletConnected()) {
         await this.connectToWallet();
+        await this.setState({ connected: isWalletConnected() });
       } else {
         // show login screen
       }
@@ -95,30 +92,41 @@ class Tokenfolio extends Component {
         this.initBinanceWorkflow(this.state.walletConnector.accounts[0]);
       }
     } else {
-      console.log("init with ethereum workflow");
+      console.log("Init with ethereum workflow");
     }
   };
 
   initBinanceWorkflow = async address => {
-    console.log("init " + address);
+    console.log("initBinanceWorkflow:  " + address);
     let binanceAssets = await getBnbBalncesAndMarkets(address);
     this.setState({ binanceAssets: binanceAssets });
     this.setState({ binanceAddress: address });
   };
 
+  clickWalletConnect = async () => {
+    this.connectToWallet();
+  };
+
   connectToWallet = async () => {
-    let walletConnector = await walletConnectInit(this.walletHasConnected);
+    let walletConnector = await walletConnectInit(
+      this.walletConnectHasConnectedCallback
+    );
     this.setState({ walletConnector: walletConnector });
   };
 
-  disconnetFromoWallet = payload => {
-    this.state.walletConnector.killSession();
+  walletConnectHasConnectedCallback = payload => {
+    WalletConnectQRCodeModal.close();
+    this.setState({ connected: true });
+    this.init(true);
+  };
 
-    // TODO: Have callback to refresh page
+  // TODO: put disconnect from walletconnect button
+  disconnetFromWallet = payload => {
+    this.state.walletConnector.killSession();
   };
 
   walletFileUploaded = (fileContents, password) => {
-    console.log("wallet file upload complete");
+    console.log("Wallet file upload complete");
     this.connectWithPrivateKey(fileContents, password);
   };
 
@@ -129,11 +137,6 @@ class Tokenfolio extends Component {
     this.setState({ file: fileContents });
     this.setState({ password: password });
     this.initBinanceWorkflow(address);
-  };
-
-  walletHasConnected = payload => {
-    WalletConnectQRCodeModal.close();
-    this.initBinanceWorkflow();
   };
 
   getTotalUsdValue = () => {
@@ -198,10 +201,15 @@ class Tokenfolio extends Component {
   reset = async () => {
     let file = this.state.file;
     let password = this.state.password;
+    let walletConnector = this.state.walletConnector;
 
     await this.setState({ ...INITIAL_STATE });
 
-    this.connectWithPrivateKey(file, password);
+    if (walletConnector === null || walletConnector === undefined) {
+      this.connectWithPrivateKey(file, password);
+    } else {
+      this.init(true);
+    }
   };
 
   startTrade = () => {
@@ -222,7 +230,8 @@ class Tokenfolio extends Component {
       trades,
       this.state.binanceAddress,
       this.state.binanceAssets,
-      this.confirmationCallback
+      this.confirmationCallback,
+      this.state.walletConnector
     );
   };
 
@@ -343,6 +352,7 @@ class Tokenfolio extends Component {
                       <MDBCardTitle>Unlock Your Wallet</MDBCardTitle>
                       <MDBCol>
                         <WalletSelector
+                          clickWalletConnect={this.clickWalletConnect}
                           walletFileUploaded={this.walletFileUploaded}
                         />
                       </MDBCol>
@@ -377,7 +387,7 @@ class Tokenfolio extends Component {
                         <MDBBtn
                           data-toggle="rebalanceModal"
                           data-target="#exampleModalCenter"
-                          disabled={this.getTotalCurrentPercentage() !== 100}
+                          disabled={this.getTotalCurrentPercentage() < 99.9}
                           onClick={this.startTrade}
                           color="indigo"
                         >

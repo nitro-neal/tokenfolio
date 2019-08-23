@@ -1,73 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8"/>
-        <!-- <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"/> -->
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <head>
+    <meta charset="utf-8" />
+    <!-- <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"/> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+    <meta name="msapplication-TileColor" content="#da532c" />
+    <meta name="theme-color" content="#ffffff" />
 
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-        <meta name="msapplication-TileColor" content="#da532c">
-        <meta name="theme-color" content="#ffffff">
-
-        <meta
-            content="Tokenfolio allows anyone to create a portfolio of tokens directly from their wallet in an instant, secure and convenient way. No order books, eth wrapping or deposits."
-            name="description">
-        <!-- manifest.json provides metadata used when your web app is installed on a
+    <meta
+      content="Tokenfolio allows anyone to create a portfolio of tokens directly from their wallet in an instant, secure and convenient way. No order books, complicated workflows or deposits."
+      name="description"
+    />
+    <!-- manifest.json provides metadata used when your web app is installed on a
         user's mobile device or desktop. See
         https://developers.google.com/web/fundamentals/web-app-manifest/ -->
-        <link rel="manifest" href="%PUBLIC_URL%/manifest.json"/>
-        <!-- Notice the use of %PUBLIC_URL% in the tags above. It will be replaced with
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- Notice the use of %PUBLIC_URL% in the tags above. It will be replaced with
         the URL of the `public` folder during the build. Only files inside the `public`
         folder can be referenced from the HTML. Unlike "/favicon.ico" or "favicon.ico",
         "%PUBLIC_URL%/favicon.ico" will work correctly both with client-side routing and
         a non-root public URL. Learn how to configure a non-root public URL by running
         `npm run build`. -->
-        <title>Tokenfolio | An Ethereum Token Portfolio Balancer</title>
+    <title>Tokenfolio | A Cryptocurrecny Portfolio Balancer</title>
 
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-        <script
-            async="async"
-            src="https://www.googletagmanager.com/gtag/js?id=UA-40965546-13"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag('js', new Date());
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async="async"
+      src="https://www.googletagmanager.com/gtag/js?id=UA-40965546-13"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-            gtag('config', 'UA-40965546-13');
+      gtag("config", "UA-40965546-13");
 
-            // gtag('set', {'user_id': 'USER_ID'});  Set the user ID using signed-in
-            // user_id.
-        </script>
+      // gtag('set', {'user_id': 'USER_ID'});  Set the user ID using signed-in
+      // user_id.
+    </script>
 
-        <script type="text/javascript">
-            window.$crisp = [];
-            window.CRISP_WEBSITE_ID = "f87a5118-db15-49aa-8adc-469449267825";
-            (function () {
-                d = document;
-                s = d.createElement("script");
-                s.src = "https://client.crisp.chat/l.js";
-                s.async = 1;
-                d
-                    .getElementsByTagName("head")[0]
-                    .appendChild(s);
-            })();
-        </script>
-
-    </head>
-    <body>
-        <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="root"></div>
-        <!-- This HTML file is a template. If you open it directly in the browser, you
+    <script type="text/javascript">
+      window.$crisp = [];
+      window.CRISP_WEBSITE_ID = "f87a5118-db15-49aa-8adc-469449267825";
+      (function() {
+        d = document;
+        s = d.createElement("script");
+        s.src = "https://client.crisp.chat/l.js";
+        s.async = 1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      })();
+    </script>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!-- This HTML file is a template. If you open it directly in the browser, you
         will see an empty page. You can add webfonts, meta tags, or analytics to this
         file. The build step will place the bundled scripts into the <body> tag. To
         begin the development, run `npm start` or `yarn start`. To create a production
         bundle, use `npm run build` or `yarn build`. -->
-    </body>
+  </body>
 </html>
