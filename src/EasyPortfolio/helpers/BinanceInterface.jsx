@@ -244,6 +244,10 @@ function round_to_precision(x, precision) {
   return y - (y % (precision === undefined ? 1 : +precision));
 }
 
+function roundWithNumber(value, decimals) {
+  return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
+}
+
 async function placeTrade(
   address,
   trades,
@@ -286,10 +290,13 @@ async function placeTrade(
         rawQuantity,
         parseFloat(assetLotSize)
       );
+      // round off stray floats
+      quantityRoundedToLotSize = roundWithNumber(quantityRoundedToLotSize, 8);
     } else {
-      quantityRoundedToLotSize =
+      quantityRoundedToLotSize = Math.round(
         Math.round(rawQuantity / parseInt(assetLotSize)) *
-        parseInt(assetLotSize);
+          parseInt(assetLotSize)
+      );
     }
 
     console.log(

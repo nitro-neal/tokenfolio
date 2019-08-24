@@ -9,7 +9,11 @@ import {
   MDBAnimation,
   MDBCard,
   MDBCardBody,
-  MDBCardTitle
+  MDBCardTitle,
+  MDBModal,
+  MDBModalBody,
+  MDBModalHeader,
+  MDBIcon
 } from "mdbreact";
 
 import {
@@ -28,6 +32,8 @@ import SelectDropdown from "./SelectDropdown";
 import RebalanceModal from "./RebalanceModal";
 
 import WalletSelector from "./WalletSelector";
+import ComparePortfolio from "./ComparePortfolio";
+import ToggleSwitch from "../ToggleSwitch";
 
 const textAlignCenter = {
   textAlign: "center"
@@ -62,7 +68,8 @@ const INITIAL_STATE = {
   currentTrades: [],
   confirmations: [],
   connected: false,
-  development: false
+  development: false,
+  settingsModal: false
 };
 
 class Tokenfolio extends Component {
@@ -105,6 +112,15 @@ class Tokenfolio extends Component {
 
   clickWalletConnect = async () => {
     this.connectToWallet();
+  };
+
+  clickWalletConnectDisconnect = () => {
+    if (this.state.walletConnector !== null) {
+      this.state.walletConnector.killSession();
+      this.setState({ walletConnector: null });
+      this.setState({ connected: false });
+      this.init();
+    }
   };
 
   connectToWallet = async () => {
@@ -152,6 +168,12 @@ class Tokenfolio extends Component {
     });
 
     return totalUsdValue;
+  };
+
+  settingsToggle = () => {
+    this.setState({
+      settingsModal: !this.state.settingsModal
+    });
   };
 
   getTotalCurrentPercentage = () => {
@@ -317,6 +339,42 @@ class Tokenfolio extends Component {
   render() {
     return (
       <MDBContainer className="h-100 custom-bg-ellipses">
+        <MDBModal
+          isOpen={this.state.settingsModal}
+          toggle={this.settingsToggle}
+          centered
+        >
+          <MDBModalHeader>Settings</MDBModalHeader>
+          <MDBModalBody>
+            <MDBRow className="h-100 align-items-center">
+              <MDBCol
+                style={{
+                  textAlign: "center",
+                  paddingTop: "40px"
+                }}
+              >
+                <MDBBtn
+                  onClick={this.clickWalletConnectDisconnect}
+                  color="indigo"
+                >
+                  Disconnect WalletConnect
+                </MDBBtn>
+              </MDBCol>
+            </MDBRow>
+
+            <MDBRow className="h-100 align-items-center">
+              <MDBCol
+                style={{
+                  textAlign: "center",
+                  paddingTop: "40px"
+                }}
+              >
+                <a href="https://tokenfolio.cc"> Switch To Ethereum Chain </a>
+              </MDBCol>
+            </MDBRow>
+          </MDBModalBody>
+        </MDBModal>
+
         <RebalanceModal
           reset={this.reset}
           currentTrades={this.state.currentTrades}
@@ -378,6 +436,15 @@ class Tokenfolio extends Component {
                         changeSlider={this.changeSlider}
                         binanceAssets={this.state.binanceAssets}
                       />
+
+                      {/** 
+                      <ComparePortfolio
+                        totalUsdValue={this.getTotalUsdValue()}
+                        totalPercentage={this.getTotalCurrentPercentage()}
+                        changeSlider={this.changeSlider}
+                        binanceAssets={this.state.binanceAssets}
+                      />
+                      */}
                     </MDBCol>
                   </MDBRow>
 
@@ -393,6 +460,22 @@ class Tokenfolio extends Component {
                         >
                           Rebalance
                         </MDBBtn>
+                        <a
+                          style={{
+                            color: "#586b81"
+                          }}
+                          href="#"
+                          onClick={this.settingsToggle}
+                        >
+                          <MDBIcon
+                            style={{
+                              verticalAlign: "bottom",
+                              paddingBottom: "7px"
+                            }}
+                            color="#586b81"
+                            icon="cog"
+                          />
+                        </a>
                       </div>
                     </MDBCol>
                   </MDBRow>
