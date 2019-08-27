@@ -6,14 +6,9 @@ import {
   MDBContainer,
   MDBRow,
   MDBCol,
-  MDBAnimation,
-  MDBCard,
-  MDBCardBody,
-  MDBCardTitle,
   MDBModal,
   MDBModalBody,
-  MDBModalHeader,
-  MDBIcon
+  MDBModalHeader
 } from "mdbreact";
 
 import {
@@ -26,36 +21,11 @@ import {
   tradeOnBnbChain,
   connectWithPrivateKey
 } from "../helpers/BinanceInterface";
-import PieChart from "./PieChart";
-import AssetSliders from "./AssetSliders";
-import SelectDropdown from "./SelectDropdown";
+
 import RebalanceModal from "./RebalanceModal";
-
-import WalletSelector from "./WalletSelector";
-import ComparePortfolio from "./ComparePortfolio";
-import ToggleSwitch from "../ToggleSwitch";
-
-const textAlignCenter = {
-  textAlign: "center"
-};
-
-const centerWithTopPadding = {
-  textAlign: "center",
-  paddingTop: "40px"
-};
-
-const paddingLeft = {
-  paddingLeft: "20px"
-};
-
-const walletSelectorCard = {
-  width: "62rem",
-  height: "24rem",
-  marginTop: "1rem"
-};
-
-const animationTypeLeft = "flipInX";
-const animationTypeRight = "flipInX";
+import ConnectionScreen from "./ConnectionScreen";
+import RebalancePortfolioScreen from "./RebalancePortfolioScreen";
+import ComparePortfolioScreen from "./ComparePortfolioScreen";
 
 const INITIAL_STATE = {
   file: null,
@@ -69,7 +39,8 @@ const INITIAL_STATE = {
   confirmations: [],
   connected: false,
   development: false,
-  settingsModal: false
+  settingsModal: false,
+  comparePortfolio: true
 };
 
 class Tokenfolio extends Component {
@@ -325,9 +296,9 @@ class Tokenfolio extends Component {
       if (confs[i].complete === false) {
         confs[i].complete = true;
         confs[i].error = false;
-        confs[i].url = `https://explorer.binance.org/tx/${
-          orderDetails.data.transactionHash
-        }`;
+        confs[
+          i
+        ].url = `https://explorer.binance.org/tx/${orderDetails.data.transactionHash}`;
         this.setState({
           confirmations: confs
         });
@@ -337,8 +308,51 @@ class Tokenfolio extends Component {
   };
 
   render() {
+    let moduleToRender;
+
+    // Connect To Wallet Module
+    if (!this.state.connected) {
+      moduleToRender = (
+        <ConnectionScreen
+          clickWalletConnect={this.clickWalletConnect}
+          walletFileUploaded={this.walletFileUploaded}
+          binanceAssets={this.state.binanceAssets}
+          getTotalUsdValue={this.getTotalUsdValue}
+        />
+      );
+    }
+
+    if (this.state.connected) {
+      moduleToRender = (
+        <RebalancePortfolioScreen
+          handleSelect={this.handleSelect}
+          binanceAssets={this.state.binanceAssets}
+          getTotalUsdValue={this.getTotalUsdValue}
+          getTotalCurrentPercentage={this.getTotalCurrentPercentage}
+          changeSlider={this.changeSlider}
+          startTrade={this.startTrade}
+          settingsToggle={this.settingsToggle}
+        />
+      );
+    }
+
+    if (this.state.connected && this.state.comparePortfolio) {
+      moduleToRender = (
+        <ComparePortfolioScreen
+          handleSelect={this.handleSelect}
+          binanceAssets={this.state.binanceAssets}
+          getTotalUsdValue={this.getTotalUsdValue}
+          getTotalCurrentPercentage={this.getTotalCurrentPercentage}
+          changeSlider={this.changeSlider}
+          startTrade={this.startTrade}
+          settingsToggle={this.settingsToggle}
+        />
+      );
+    }
+
     return (
       <MDBContainer className="h-100 custom-bg-ellipses">
+        {/* Settings modal */}
         <MDBModal
           isOpen={this.state.settingsModal}
           toggle={this.settingsToggle}
@@ -382,123 +396,11 @@ class Tokenfolio extends Component {
           toggle={this.toggleRebalanceModal}
           modal={this.state.rebalanceModal}
         />
+
+        {/* Main Module */}
         <MDBRow className="h-100 align-items-center">
-          <MDBCol md="4">
-            <MDBAnimation type={animationTypeLeft}>
-              <div className="logo">
-                <img
-                  className="img-fluid"
-                  alt="Tokenfolio logo"
-                  src="tflogo.png"
-                />
-
-                <PieChart assets={this.state.binanceAssets} />
-
-                <p style={textAlignCenter}>
-                  USD Value: ${Math.round(this.getTotalUsdValue() * 100) / 100}
-                </p>
-              </div>
-            </MDBAnimation>
-          </MDBCol>
-
-          <MDBCol md="8">
-            <MDBAnimation type={animationTypeRight}>
-              {!this.state.connected ? (
-                <MDBRow className="h-100 align-items-center">
-                  <MDBCard style={walletSelectorCard}>
-                    <MDBCardBody>
-                      <MDBCardTitle>Unlock Your Wallet</MDBCardTitle>
-                      <MDBCol>
-                        <WalletSelector
-                          clickWalletConnect={this.clickWalletConnect}
-                          walletFileUploaded={this.walletFileUploaded}
-                        />
-                      </MDBCol>
-                    </MDBCardBody>
-                  </MDBCard>
-                </MDBRow>
-              ) : (
-                <>
-                  <MDBRow className="h-100 align-items-center">
-                    <MDBCol>
-                      <SelectDropdown
-                        handleSelect={this.handleSelect}
-                        binanceAssets={this.state.binanceAssets}
-                      />
-                    </MDBCol>
-                  </MDBRow>
-
-                  <MDBRow className="h-100 align-items-center">
-                    <MDBCol>
-                      <AssetSliders
-                        totalUsdValue={this.getTotalUsdValue()}
-                        totalPercentage={this.getTotalCurrentPercentage()}
-                        changeSlider={this.changeSlider}
-                        binanceAssets={this.state.binanceAssets}
-                      />
-
-                      {/** 
-                      <ComparePortfolio
-                        totalUsdValue={this.getTotalUsdValue()}
-                        totalPercentage={this.getTotalCurrentPercentage()}
-                        changeSlider={this.changeSlider}
-                        binanceAssets={this.state.binanceAssets}
-                      />
-                      */}
-                    </MDBCol>
-                  </MDBRow>
-
-                  <MDBRow className="h-100 align-items-center">
-                    <MDBCol style={centerWithTopPadding}>
-                      <div style={paddingLeft}>
-                        <MDBBtn
-                          data-toggle="rebalanceModal"
-                          data-target="#exampleModalCenter"
-                          disabled={this.getTotalCurrentPercentage() < 99.9}
-                          onClick={this.startTrade}
-                          color="indigo"
-                        >
-                          Rebalance
-                        </MDBBtn>
-                        <a
-                          style={{
-                            color: "#586b81"
-                          }}
-                          href="#"
-                          onClick={this.settingsToggle}
-                        >
-                          <MDBIcon
-                            style={{
-                              verticalAlign: "bottom",
-                              paddingBottom: "7px"
-                            }}
-                            color="#586b81"
-                            icon="cog"
-                          />
-                        </a>
-                      </div>
-                    </MDBCol>
-                  </MDBRow>
-                </>
-              )}
-
-              <MDBRow className="h-100 align-items-center">
-                <MDBCol style={centerWithTopPadding}>
-                  <p>
-                    Powered by
-                    <a
-                      rel="noopener noreferrer"
-                      href="https://www.binance.org/"
-                      target="_blank"
-                    >
-                      {" "}
-                      Binance Chain
-                    </a>
-                  </p>
-                </MDBCol>
-              </MDBRow>
-            </MDBAnimation>
-          </MDBCol>
+          {/* Start of rendering */}
+          {moduleToRender}
         </MDBRow>
       </MDBContainer>
     );
