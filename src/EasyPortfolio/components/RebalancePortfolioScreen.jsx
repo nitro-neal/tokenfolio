@@ -8,7 +8,11 @@ import {
   MDBCardBody,
   MDBCardTitle,
   MDBBtn,
-  MDBIcon
+  MDBIcon,
+  MDBPopover,
+  MDBPopoverBody,
+  MDBPopper,
+  MDBPopoverHeader
 } from "mdbreact";
 
 import PieChart from "./PieChart";
@@ -16,6 +20,7 @@ import AssetSliders from "./AssetSliders";
 import WalletSelector from "./WalletSelector";
 import SelectDropdown from "./SelectDropdown";
 import RebalanceModal from "./RebalanceModal";
+import Footer from "./Footer";
 
 const textAlignCenter = {
   textAlign: "center"
@@ -41,6 +46,58 @@ const animationTypeRight = "flipInX";
 
 class RebalancePortfolioScreen extends Component {
   render() {
+    if (
+      this.props.binanceAssets === undefined ||
+      this.props.binanceAssets === null ||
+      this.props.binanceAssets.length === 0
+    ) {
+      return "";
+    }
+
+    let rebalanceButton;
+
+    if (this.props.getTotalCurrentPercentage() < 99.9) {
+      rebalanceButton = (
+        <MDBPopover placement="top" popover clickable id="popper1">
+          <MDBBtn
+            data-toggle="rebalanceModal"
+            data-target="#exampleModalCenter"
+            // disabled={this.props.getTotalCurrentPercentage() < 99.9}
+            // onClick={this.props.startTrade}
+            color="indigo"
+          >
+            Rebalance
+          </MDBBtn>
+          <div>
+            <MDBPopoverHeader>Need 100% Alloication</MDBPopoverHeader>
+            <MDBPopoverBody>
+              <p>
+                Please drag your sliders until you have 100% of your portfolio
+                allocated.{" "}
+              </p>
+
+              <p>
+                Current allowication:{" "}
+                {Math.round(this.props.getTotalCurrentPercentage())} %
+              </p>
+            </MDBPopoverBody>
+          </div>
+        </MDBPopover>
+      );
+    } else {
+      rebalanceButton = (
+        <MDBBtn
+          data-toggle="rebalanceModal"
+          data-target="#exampleModalCenter"
+          // disabled={this.props.getTotalCurrentPercentage() < 99.9}
+          onClick={this.props.startTrade}
+          color="indigo"
+        >
+          Rebalance
+        </MDBBtn>
+      );
+    }
+
     let rebalanceModule = (
       <>
         <MDBRow className="h-100 align-items-center">
@@ -65,33 +122,24 @@ class RebalancePortfolioScreen extends Component {
 
         <MDBRow className="h-100 align-items-center">
           <MDBCol style={centerWithTopPadding}>
-            <div style={paddingLeft}>
-              <MDBBtn
-                data-toggle="rebalanceModal"
-                data-target="#exampleModalCenter"
-                disabled={this.props.getTotalCurrentPercentage() < 99.9}
-                onClick={this.props.startTrade}
-                color="indigo"
-              >
-                Rebalance
-              </MDBBtn>
-              <a
+            {rebalanceButton}
+
+            <a
+              style={{
+                color: "#586b81"
+              }}
+              href="#"
+              onClick={this.props.settingsToggle}
+            >
+              <MDBIcon
                 style={{
-                  color: "#586b81"
+                  verticalAlign: "bottom",
+                  paddingBottom: "7px"
                 }}
-                href="#"
-                onClick={this.props.settingsToggle}
-              >
-                <MDBIcon
-                  style={{
-                    verticalAlign: "bottom",
-                    paddingBottom: "7px"
-                  }}
-                  color="#586b81"
-                  icon="cog"
-                />
-              </a>
-            </div>
+                color="#586b81"
+                icon="cog"
+              />
+            </a>
           </MDBCol>
         </MDBRow>
       </>
@@ -118,21 +166,10 @@ class RebalancePortfolioScreen extends Component {
       <MDBCol md="8">
         <MDBAnimation type={animationTypeRight}>
           {rebalanceModule}
-          <MDBRow className="h-100 align-items-center">
-            <MDBCol style={centerWithTopPadding}>
-              <p>
-                Powered by
-                <a
-                  rel="noopener noreferrer"
-                  href="https://www.binance.org/"
-                  target="_blank"
-                >
-                  {" "}
-                  Binance Chain
-                </a>
-              </p>
-            </MDBCol>
-          </MDBRow>
+          <Footer
+            clickSharePortfolio={this.props.clickSharePortfolio}
+            shareToggle={this.props.shareToggle}
+          />
         </MDBAnimation>
       </MDBCol>
     );

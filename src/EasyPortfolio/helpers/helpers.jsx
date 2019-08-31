@@ -1,11 +1,5 @@
 //helpers.js
 
-// Todo
-export function getCoinPrices(coinSymbols, binanceWorkflow) {
-  var coinPriceMap = new Map();
-  return coinPriceMap;
-}
-
 export async function download() {
   let urls = [];
   let fileNames = [];
@@ -34,5 +28,26 @@ export async function download() {
         correctSymbol.toLowerCase() +
         ".png"
     );
+  });
+}
+
+export function setCharAt(str, index, chr) {
+  if (index > str.length - 1) return str;
+  return str.substr(0, index) + chr + str.substr(index + 1);
+}
+
+export function generateShareLink(development, binanceAssets) {
+  let url;
+
+  if (development) {
+    url = "http://binance.localhost:3000/portfolio";
+  } else {
+    url = "https://binance.tokenfolio.cc/portfolio";
+  }
+
+  binanceAssets.forEach(asset => {
+    if (asset.inMyPortfolio) {
+      // url +
+    }
   });
 }

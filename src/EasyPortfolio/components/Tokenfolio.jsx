@@ -10,22 +10,22 @@ import {
   MDBModalBody,
   MDBModalHeader
 } from "mdbreact";
-
 import {
   walletConnectInit,
   isWalletConnected
 } from "../helpers/WalletConnectHelper";
+import { setCharAt } from "../helpers/helpers";
 import {
   getBnbBalncesAndMarkets,
   computeTrades,
   tradeOnBnbChain,
   connectWithPrivateKey
 } from "../helpers/BinanceInterface";
-
 import RebalanceModal from "./RebalanceModal";
 import ConnectionScreen from "./ConnectionScreen";
 import RebalancePortfolioScreen from "./RebalancePortfolioScreen";
 import ComparePortfolioScreen from "./ComparePortfolioScreen";
+import ShareModal from "./ShareModal";
 
 const INITIAL_STATE = {
   file: null,
@@ -33,6 +33,7 @@ const INITIAL_STATE = {
   binanceWorkflow: false,
   walletConnector: null,
   binanceAssets: [],
+  portfolioCompareAssets: [],
   binanceAddress: "",
   rebalanceModal: false,
   currentTrades: [],
@@ -40,14 +41,19 @@ const INITIAL_STATE = {
   connected: false,
   development: false,
   settingsModal: false,
-  comparePortfolio: true
+  comparePortfolio: false,
+  comparePortfolioName: "",
+  shareModal: false,
+  shareLink: "https://binance.tokenfolio.cc/"
 };
 
 class Tokenfolio extends Component {
   state = { ...INITIAL_STATE };
 
   componentDidMount() {
+    this.parseHref();
     this.init(this.props.binanceWorkflow);
+
     this.setState({ binanceWorkflow: this.props.binanceWorkflow });
     this.setState({ development: this.props.development });
 
@@ -147,6 +153,17 @@ class Tokenfolio extends Component {
     });
   };
 
+  shareToggle = () => {
+    // let shareLink = generateShareLink(this.props.development);
+    this.setState({
+      shareLink:
+        "http://binance.localhost:3000/portfolio/bnb_and_raven_tokenfolio-bnb_50-raven_50"
+    });
+    this.setState({
+      shareModal: !this.state.shareModal
+    });
+  };
+
   getTotalCurrentPercentage = () => {
     let totalPercentage = 0;
 
@@ -170,9 +187,17 @@ class Tokenfolio extends Component {
 
   changeSlider = (asset, value) => {
     const binanceAssets = [...this.state.binanceAssets];
-    let element = binanceAssets.find(
+    let element;
+
+    element = binanceAssets.find(
       bnbAsset => bnbAsset.baseAssetName === asset.imageSymbol
     );
+
+    if (element === undefined || element === null) {
+      element = binanceAssets.find(
+        bnbAsset => bnbAsset.baseAssetName === asset.baseAssetName
+      );
+    }
 
     let totalPercentage = 0;
 
@@ -203,6 +228,26 @@ class Tokenfolio extends Component {
     } else {
       this.init(true);
     }
+  };
+
+  startComparePortfolioTrade = () => {
+    console.log("start Compare Portfolio Trade");
+    this.state.binanceAssets.forEach(asset => {
+      if (
+        this.state.portfolioCompareAssets.some(
+          portfolioAsset => portfolioAsset.baseAssetName === asset.baseAssetName
+        )
+      ) {
+        asset.inMyPortfolio = true;
+        asset.newPortfolioPercent = this.state.portfolioCompareAssets.filter(
+          portfolioAsset => portfolioAsset.baseAssetName === asset.baseAssetName
+        )[0].currentPortfolioPercent;
+      } else {
+        asset.newPortfolioPercent = 0;
+      }
+    });
+
+    this.startTrade();
   };
 
   startTrade = () => {
@@ -307,6 +352,99 @@ class Tokenfolio extends Component {
     }
   };
 
+  clickSharePortfolio = () => {
+    console.log(this.state.binanceAssets);
+  };
+
+  parseHref = async () => {
+    let portfolioAssets = [];
+    let baseAssetNameMap = new Map();
+    let symbolMap = new Map();
+
+    let currentPrices = await axios.get(
+      "https://dex.binance.org/api/v1/ticker/24hr"
+    );
+
+    // Only have bnb pairs
+    currentPrices = currentPrices.data.filter(
+      asset =>
+        asset.symbol.includes("_BNB") || asset.symbol.includes("BNB_USDSB-1AC")
+    );
+
+    currentPrices.forEach(asset => {
+      let n = asset.baseAssetName.indexOf("-");
+      let friendlyName = asset.baseAssetName.substring(
+        0,
+        n !== -1 ? n : asset.baseAssetName.length
+      );
+      baseAssetNameMap.set(
+        friendlyName.toUpperCase(),
+        asset.baseAssetName.toUpperCase()
+      );
+
+      symbolMap.set(friendlyName.toUpperCase(), asset.symbol.toUpperCase());
+    });
+
+    console.log(currentPrices);
+
+    // http://binance.localhost:3000/portfolio/bnb_and_raven_tokenfolio-bnb_50-raven_50
+    let lastSlashIndex = window.location.href.lastIndexOf("/portfolio/");
+
+    if (lastSlashIndex === -1) {
+      return;
+    }
+
+    lastSlashIndex += 11;
+
+    let portfolioEnding = window.location.href.substring(
+      lastSlashIndex,
+      window.location.href.length
+    );
+
+    portfolioEnding = portfolioEnding.replace("#", "");
+
+    let chunks = portfolioEnding.split("-");
+
+    // let index = 0;
+    chunks.forEach((chunk, index) => {
+      console.log(chunk);
+      if (index === 0) {
+        let nameChunks = chunk.split("_");
+        let portfolioName = "";
+        for (let i = 0; i < nameChunks.length; i++) {
+          nameChunks[i] = setCharAt(
+            nameChunks[i],
+            0,
+            nameChunks[i].charAt(0).toUpperCase()
+          );
+
+          portfolioName += nameChunks[i];
+
+          if (i !== nameChunks.length - 1) {
+            portfolioName += " ";
+          }
+        }
+        this.setState({ comparePortfolioName: portfolioName });
+      } else {
+        let assetAndPercent = chunk.split("_");
+        let assetOne = {
+          baseAssetName: baseAssetNameMap.get(assetAndPercent[0].toUpperCase()),
+          friendlyName: assetAndPercent[0].toUpperCase(),
+          currentPortfolioPercent: parseInt(assetAndPercent[1]),
+          inMyPortfolio: true
+        };
+
+        portfolioAssets.push(assetOne);
+      }
+    });
+
+    console.log("parsed assets");
+    console.log(portfolioAssets);
+
+    this.setState({ comparePortfolio: true });
+    this.setState({ portfolioCompareAssets: portfolioAssets });
+  };
+
   render() {
     let moduleToRender;
 
@@ -332,6 +470,9 @@ class Tokenfolio extends Component {
           changeSlider={this.changeSlider}
           startTrade={this.startTrade}
           settingsToggle={this.settingsToggle}
+          clickSharePortfolio={this.clickSharePortfolio}
+          shareToggle={this.shareToggle}
+          // shareLink={this.state.shareLink}
         />
       );
     }
@@ -339,19 +480,27 @@ class Tokenfolio extends Component {
     if (this.state.connected && this.state.comparePortfolio) {
       moduleToRender = (
         <ComparePortfolioScreen
-          handleSelect={this.handleSelect}
+          convertToPortfolioAssets={this.state.portfolioCompareAssets}
           binanceAssets={this.state.binanceAssets}
           getTotalUsdValue={this.getTotalUsdValue}
           getTotalCurrentPercentage={this.getTotalCurrentPercentage}
-          changeSlider={this.changeSlider}
-          startTrade={this.startTrade}
+          comparePortfolioName={this.state.comparePortfolioName}
+          startComparePortfolioTrade={this.startComparePortfolioTrade}
           settingsToggle={this.settingsToggle}
+          clickSharePortfolio={this.clickSharePortfolio}
         />
       );
     }
 
     return (
       <MDBContainer className="h-100 custom-bg-ellipses">
+        {/* Share Modal */}
+        <ShareModal
+          toggle={this.shareToggle}
+          modal={this.state.shareModal}
+          shareLink={this.state.shareLink}
+        />
+
         {/* Settings modal */}
         <MDBModal
           isOpen={this.state.settingsModal}

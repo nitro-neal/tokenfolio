@@ -44,7 +44,7 @@ class RebalanceModal extends Component {
               <img
                 alt={trade.from + "-" + trade.to}
                 style={imageStyle}
-                src={"./logos/" + trade.fromLogoName.toLowerCase() + ".png"}
+                src={"/logos/" + trade.fromLogoName.toLowerCase() + ".png"}
               />
             </MDBCol>
             <MDBCol size={"1"}>
@@ -54,7 +54,7 @@ class RebalanceModal extends Component {
               <img
                 alt={trade.from + "-" + trade.to}
                 style={imageStyle}
-                src={"./logos/" + trade.toLogoName.toLowerCase() + ".png"}
+                src={"/logos/" + trade.toLogoName.toLowerCase() + ".png"}
               />
             </MDBCol>
             <MDBCol size={"3"}>

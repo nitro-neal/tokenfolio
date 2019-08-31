@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import AssetSliders from "./AssetSliders";
 
 import {
   MDBRow,
@@ -9,17 +8,18 @@ import {
   MDBCardBody,
   MDBCardTitle,
   MDBBtn,
-  MDBIcon
+  MDBIcon,
+  Animation
 } from "mdbreact";
+import Footer from "./Footer";
 
-import PieChart from "./PieChart";
-import WalletSelector from "./WalletSelector";
-import SelectDropdown from "./SelectDropdown";
-import RebalanceModal from "./RebalanceModal";
-
-const textAlignCenter = {
+const centerText = {
   textAlign: "center"
 };
+
+const imageStyle = { width: "50px", paddingRight: "10px" };
+
+const animationTypeLeft = "flipInX";
 
 const centerWithTopPadding = {
   textAlign: "center",
@@ -30,59 +30,180 @@ const paddingLeft = {
   paddingLeft: "20px"
 };
 
-const walletSelectorCard = {
-  width: "62rem",
-  height: "24rem",
-  marginTop: "1rem"
-};
-
-const animationTypeLeft = "flipInX";
-const animationTypeRight = "flipInX";
-
 class ComparePortfolioScreen extends Component {
   state = {};
-
-  changeSlider = () => {
-    console.log("slider change");
-  };
   render() {
+    if (
+      this.props.binanceAssets === undefined ||
+      this.props.binanceAssets === null ||
+      this.props.binanceAssets.length === 0
+    ) {
+      return "";
+    }
+
+    let rebalanceRows = [];
+
+    console.log("convert assets?");
+    console.log(this.props.convertToPortfolioAssets);
+    // ADD BNB FIRST...
+    this.props.binanceAssets.forEach(asset => {
+      if (asset.baseAssetName === "BNB" && asset.inMyPortfolio) {
+        let toPercent = 0.0;
+        if (
+          this.props.convertToPortfolioAssets.filter(
+            portfolioAsset =>
+              portfolioAsset.baseAssetName === asset.baseAssetName
+          ).length > 0
+        ) {
+          toPercent = this.props.convertToPortfolioAssets.filter(
+            portfolioAsset =>
+              portfolioAsset.baseAssetName === asset.baseAssetName
+          )[0].currentPortfolioPercent;
+        }
+        rebalanceRows.push(
+          <MDBAnimation key={asset.baseAssetName} type={animationTypeLeft}>
+            <MDBRow style={centerText}>
+              <MDBCol size={"9"}>
+                <p style={{ textAlign: "left" }}>
+                  <img
+                    alt={asset.baseAssetName}
+                    style={imageStyle}
+                    src={"/logos/" + asset.baseAssetName.toLowerCase() + ".png"}
+                  />
+                  {asset.realName} ({asset.friendlyName})
+                </p>
+              </MDBCol>
+              <MDBCol size={"1"}>
+                <p>{Math.round(asset.currentPortfolioPercent)}%</p>
+              </MDBCol>
+              <MDBCol size={"1"}>
+                <MDBIcon icon="angle-double-right" />
+              </MDBCol>
+              <MDBCol size={"1"}>
+                <p>{toPercent}%</p>
+              </MDBCol>
+            </MDBRow>
+          </MDBAnimation>
+        );
+      }
+    });
+
+    // ADD the rest
+    this.props.binanceAssets.forEach(asset => {
+      if (
+        this.props.convertToPortfolioAssets.some(
+          portfolioAsset =>
+            portfolioAsset.baseAssetName === asset.baseAssetName ||
+            asset.inMyPortfolio
+        ) &&
+        asset.baseAssetName !== "BNB"
+      ) {
+        let toPercent = 0.0;
+        if (
+          this.props.convertToPortfolioAssets.filter(
+            portfolioAsset =>
+              portfolioAsset.baseAssetName === asset.baseAssetName
+          ).length > 0
+        ) {
+          toPercent = this.props.convertToPortfolioAssets.filter(
+            portfolioAsset =>
+              portfolioAsset.baseAssetName === asset.baseAssetName
+          )[0].currentPortfolioPercent;
+        }
+        rebalanceRows.push(
+          <MDBAnimation key={asset.baseAssetName} type={animationTypeLeft}>
+            <MDBRow style={centerText}>
+              <MDBCol size={"9"}>
+                <p style={{ textAlign: "left" }}>
+                  <img
+                    alt={asset.baseAssetName}
+                    style={imageStyle}
+                    src={"/logos/" + asset.baseAssetName.toLowerCase() + ".png"}
+                  />
+                  {asset.realName} ({asset.friendlyName})
+                </p>
+              </MDBCol>
+              <MDBCol size={"1"}>
+                <p>{Math.round(asset.currentPortfolioPercent)}%</p>
+              </MDBCol>
+              <MDBCol size={"1"}>
+                <Animation type="pulse" infinite>
+                  <MDBIcon icon="angle-double-right" />
+                </Animation>
+              </MDBCol>
+              <MDBCol size={"1"}>
+                <p>{toPercent}%</p>
+              </MDBCol>
+            </MDBRow>
+          </MDBAnimation>
+        );
+      }
+    });
+
     return (
       <div>
         <MDBRow className="h-100 align-items-center">
           <MDBCol md="4"></MDBCol>
           <MDBCol md="4">
-            <img className="img-fluid" alt="Tokenfolio logo" src="tflogo.png" />
+            <img
+              className="img-fluid"
+              alt="Tokenfolio logo"
+              src="/tflogo.png"
+            />
           </MDBCol>
           <MDBCol md="4"></MDBCol>
         </MDBRow>
 
         <MDBRow className="h-100 align-items-center">
+          <MDBCol md="3"></MDBCol>
           <MDBCol md="6">
-            <MDBAnimation type={animationTypeLeft}>
-              <div className="logo">
-                <p style={textAlignCenter}>Eth / Bat Tokenfolio</p>
-                <PieChart assets={this.props.binanceAssets} />
-              </div>
-            </MDBAnimation>
+            <p style={{ padding: "7px", textAlign: "center" }}>
+              Your current allocation vs "{this.props.comparePortfolioName}"
+              tokenfolio
+            </p>
           </MDBCol>
-          <MDBCol md="6">
-            <MDBAnimation type={animationTypeLeft}>
-              <div className="logo">
-                <p style={textAlignCenter}>Your Tokenfolio</p>
-                <PieChart assets={this.props.binanceAssets} />
+          <MDBCol md="3"></MDBCol>
+        </MDBRow>
 
-                {/*
-                <p style={textAlignCenter}>
-                  USD Value: $
-                  {Math.round(this.props.getTotalUsdValue() * 100) / 100}
-                </p>
-                */}
-              </div>
-            </MDBAnimation>
+        <MDBRow className="h-100 align-items-center">
+          <MDBCol md="3"></MDBCol>
+          <MDBCol md="6">{rebalanceRows}</MDBCol>
+          <MDBCol md="3"></MDBCol>
+        </MDBRow>
+
+        <MDBRow className="h-100 align-items-center">
+          <MDBCol style={centerWithTopPadding}>
+            <div style={paddingLeft}>
+              <MDBBtn
+                data-toggle="rebalanceModal"
+                data-target="#exampleModalCenter"
+                disabled={this.props.getTotalCurrentPercentage() < 99.9}
+                onClick={this.props.startComparePortfolioTrade}
+                color="indigo"
+              >
+                Rebalance
+              </MDBBtn>
+              <a
+                style={{
+                  color: "#586b81"
+                }}
+                href="#"
+                onClick={this.props.settingsToggle}
+              >
+                <MDBIcon
+                  style={{
+                    verticalAlign: "bottom",
+                    paddingBottom: "7px"
+                  }}
+                  color="#586b81"
+                  icon="cog"
+                />
+              </a>
+            </div>
           </MDBCol>
         </MDBRow>
 
-        <MDBRow className="h-100 align-items-center"></MDBRow>
+        <Footer clickSharePortfolio={this.props.clickSharePortfolio} />
       </div>
     );
   }

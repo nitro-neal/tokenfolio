@@ -104,7 +104,11 @@ function computeInitialPercentages(currentPrices, symbolMap) {
     );
 
     asset.friendlyName = friendlyName;
-    asset.realName = symbolMap.get(asset.baseAssetName);
+    if (asset.baseAssetName === "BNB") {
+      asset.realName = "Binance Coin";
+    } else {
+      asset.realName = symbolMap.get(asset.baseAssetName);
+    }
   });
 
   return currentPrices;
@@ -304,9 +308,7 @@ async function placeTrade(
     );
 
     console.log(
-      `asset : ${
-        asset.baseAssetName
-      } address : ${address} symbolMarketPair : ${symbolMarketPair}  buyOrSell : ${buyOrSell}  assetPrice : ${assetPrice}  rawQuantity : ${rawQuantity} quantityRoundedToLotSize : ${quantityRoundedToLotSize}  sequenceNumber : ${sequenceNumber}  timeInForce : ${timeInForce} `
+      `asset : ${asset.baseAssetName} address : ${address} symbolMarketPair : ${symbolMarketPair}  buyOrSell : ${buyOrSell}  assetPrice : ${assetPrice}  rawQuantity : ${rawQuantity} quantityRoundedToLotSize : ${quantityRoundedToLotSize}  sequenceNumber : ${sequenceNumber}  timeInForce : ${timeInForce} `
     );
 
     if (quantityRoundedToLotSize < 0.001) {

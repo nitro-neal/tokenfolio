@@ -41,6 +41,8 @@ class AssetSliders extends React.Component {
       asset => asset.inMyPortfolio === true
     );
 
+    //console.log(prunedAssets);
+
     let sortedAssets = prunedAssets.map(function(asset) {
       let n = asset.baseAssetName.indexOf("-");
       let nLogo = asset.symbol.indexOf("_");
