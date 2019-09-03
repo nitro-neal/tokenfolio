@@ -40,14 +40,26 @@ export function generateShareLink(development, binanceAssets) {
   let url;
 
   if (development) {
-    url = "http://binance.localhost:3000/portfolio";
+    url = "http://binance.localhost:3000/portfolio/";
   } else {
-    url = "https://binance.tokenfolio.cc/portfolio";
+    url = "https://binance.tokenfolio.cc/portfolio/";
   }
 
-  binanceAssets.forEach(asset => {
-    if (asset.inMyPortfolio) {
-      // url +
+  url += "Binance_Chain-";
+
+  binanceAssets.forEach((asset, index) => {
+    if (asset.inMyPortfolio && asset.newPortfolioPercent >= 0.001) {
+      url +=
+        asset.friendlyName.toLowerCase() +
+        "_" +
+        Math.round(asset.newPortfolioPercent) +
+        "-";
     }
   });
+
+  if (url.charAt(url.length - 1) === "-") {
+    url = url.substring(0, url.length - 1);
+  }
+
+  return url;
 }

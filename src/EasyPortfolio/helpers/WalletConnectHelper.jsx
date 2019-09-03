@@ -44,7 +44,7 @@ function subscribeToEvents(walletConnector, onConnectedCallback) {
       throw error;
     }
 
-    const { chainId, accounts } = payload.params[0];
+    // const { chainId, accounts } = payload.params[0];
     // this.onSessionUpdate(accounts, chainId);
   });
 

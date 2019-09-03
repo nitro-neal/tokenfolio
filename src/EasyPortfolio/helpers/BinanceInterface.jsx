@@ -2,8 +2,8 @@ import axios from "axios";
 import base64js from "base64-js";
 
 const BnbApiClient = require("@binance-chain/javascript-sdk");
-const bnbRpc = require("@binance-chain/javascript-sdk/lib/rpc");
-const bnbUtils = require("@binance-chain/javascript-sdk/lib/utils");
+// const bnbRpc = require("@binance-chain/javascript-sdk/lib/rpc");
+// const bnbUtils = require("@binance-chain/javascript-sdk/lib/utils");
 
 const api = "https://dex.binance.org/"; /// api string
 const bnbClient = new BnbApiClient(api);

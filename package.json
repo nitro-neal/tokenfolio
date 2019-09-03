@@ -17,7 +17,8 @@
     "@trustwallet/walletconnect": "^0.0.14",
     "@walletconnect/qrcode-modal": "^1.0.0-beta.32",
     "axios": "^0.18.0",
-    "@binance-chain/javascript-sdk": "^2.14.1"
+    "@binance-chain/javascript-sdk": "^2.14.1",
+    "react-sharingbuttons": "^1.0.0"
   },
   "engines": {
     "node": ">=10.0.0"

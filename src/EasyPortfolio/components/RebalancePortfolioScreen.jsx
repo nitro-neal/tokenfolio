@@ -4,22 +4,17 @@ import {
   MDBRow,
   MDBCol,
   MDBAnimation,
-  MDBCard,
-  MDBCardBody,
-  MDBCardTitle,
   MDBBtn,
   MDBIcon,
   MDBPopover,
   MDBPopoverBody,
-  MDBPopper,
   MDBPopoverHeader
 } from "mdbreact";
 
 import PieChart from "./PieChart";
 import AssetSliders from "./AssetSliders";
-import WalletSelector from "./WalletSelector";
+
 import SelectDropdown from "./SelectDropdown";
-import RebalanceModal from "./RebalanceModal";
 import Footer from "./Footer";
 
 const textAlignCenter = {
@@ -29,16 +24,6 @@ const textAlignCenter = {
 const centerWithTopPadding = {
   textAlign: "center",
   paddingTop: "40px"
-};
-
-const paddingLeft = {
-  paddingLeft: "20px"
-};
-
-const walletSelectorCard = {
-  width: "62rem",
-  height: "24rem",
-  marginTop: "1rem"
 };
 
 const animationTypeLeft = "flipInX";
@@ -149,7 +134,11 @@ class RebalancePortfolioScreen extends Component {
       <MDBCol md="4">
         <MDBAnimation type={animationTypeLeft}>
           <div className="logo">
-            <img className="img-fluid" alt="Tokenfolio logo" src="tflogo.png" />
+            <img
+              className="img-fluid"
+              alt="Tokenfolio logo"
+              src="/tflogo.png"
+            />
 
             <PieChart assets={this.props.binanceAssets} />
 

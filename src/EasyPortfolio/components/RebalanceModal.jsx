@@ -12,6 +12,7 @@ import {
   MDBBtn,
   MDBAlert
 } from "mdbreact";
+import Footer from "./Footer";
 
 const centerText = {
   textAlign: "center"
@@ -141,6 +142,11 @@ class RebalanceModal extends Component {
                     </MDBBtn>
                   </MDBCol>
                 </MDBRow>
+
+                <Footer
+                  clickSharePortfolio={this.props.clickSharePortfolio}
+                  shareToggle={this.props.shareToggle}
+                />
               </MDBAnimation>
             ) : (
               ""

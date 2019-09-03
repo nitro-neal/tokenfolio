@@ -10,7 +10,6 @@ import {
 } from "mdbreact";
 
 import PieChart from "./PieChart";
-import AssetSliders from "./AssetSliders";
 import WalletSelector from "./WalletSelector";
 
 const textAlignCenter = {
@@ -20,10 +19,6 @@ const textAlignCenter = {
 const centerWithTopPadding = {
   textAlign: "center",
   paddingTop: "40px"
-};
-
-const paddingLeft = {
-  paddingLeft: "20px"
 };
 
 const walletSelectorCard = {
@@ -57,7 +52,11 @@ class ConnectionScreen extends Component {
       <MDBCol md="4">
         <MDBAnimation type={animationTypeLeft}>
           <div className="logo">
-            <img className="img-fluid" alt="Tokenfolio logo" src="tflogo.png" />
+            <img
+              className="img-fluid"
+              alt="Tokenfolio logo"
+              src="/tflogo.png"
+            />
 
             <PieChart assets={this.props.binanceAssets} />
 

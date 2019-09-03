@@ -96,7 +96,7 @@ class AssetSliders extends React.Component {
                   <img
                     alt=""
                     style={imageStyle}
-                    src={"./logos/" + asset.imageSymbol.toLowerCase() + ".png"}
+                    src={"/logos/" + asset.imageSymbol.toLowerCase() + ".png"}
                   />{" "}
                 </MDBCol>
                 <MDBCol size={"7"}>

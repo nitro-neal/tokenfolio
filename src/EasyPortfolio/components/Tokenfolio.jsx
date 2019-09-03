@@ -14,7 +14,7 @@ import {
   walletConnectInit,
   isWalletConnected
 } from "../helpers/WalletConnectHelper";
-import { setCharAt } from "../helpers/helpers";
+import { setCharAt, generateShareLink } from "../helpers/helpers";
 import {
   getBnbBalncesAndMarkets,
   computeTrades,
@@ -154,10 +154,15 @@ class Tokenfolio extends Component {
   };
 
   shareToggle = () => {
-    // let shareLink = generateShareLink(this.props.development);
+    let shareLink = generateShareLink(
+      this.props.development,
+      this.state.binanceAssets
+    );
     this.setState({
-      shareLink:
-        "http://binance.localhost:3000/portfolio/bnb_and_raven_tokenfolio-bnb_50-raven_50"
+      shareLink: shareLink
+    });
+    this.setState({
+      rebalanceModal: false
     });
     this.setState({
       shareModal: !this.state.shareModal
@@ -544,6 +549,8 @@ class Tokenfolio extends Component {
           confirmations={this.state.confirmations}
           toggle={this.toggleRebalanceModal}
           modal={this.state.rebalanceModal}
+          clickSharePortfolio={this.clickSharePortfolio}
+          shareToggle={this.shareToggle}
         />
 
         {/* Main Module */}
