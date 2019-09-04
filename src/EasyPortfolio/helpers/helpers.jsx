@@ -42,7 +42,7 @@ export function generateShareLink(development, binanceAssets) {
   if (development) {
     url = "http://binance.localhost:3000/portfolio/";
   } else {
-    url = "https://binance.tokenfolio.cc/portfolio/";
+    url = "https://www.binance.tokenfolio.cc/portfolio/";
   }
 
   url += "Binance_Chain-";
