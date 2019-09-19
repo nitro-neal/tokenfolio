@@ -6,6 +6,10 @@ export default {
     textAlign: "center",
     paddingTop: "40px"
   },
+  centerWithBottomPadding: {
+    textAlign: "center",
+    paddingBottom: "40px"
+  },
   paddingLeft: {
     paddingLeft: "20px"
   },

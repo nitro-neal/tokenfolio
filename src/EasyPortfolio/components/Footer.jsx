@@ -58,6 +58,15 @@ class Footer extends Component {
               style={GLOBALS.paddingLeft}
               rel="noopener noreferrer"
               target="_blank"
+              href="https://www.youtube.com/watch?v=XdEE7sEng0k"
+            >
+              <MDBIcon fab icon="youtube" />
+            </a>
+
+            <a
+              style={GLOBALS.paddingLeft}
+              rel="noopener noreferrer"
+              target="_blank"
               href="https://github.com/nitro-neal/tokenfolio"
             >
               <MDBIcon fab icon="github" />

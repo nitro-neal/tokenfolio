@@ -294,8 +294,11 @@ async function placeTrade(
         rawQuantity,
         parseFloat(assetLotSize)
       );
+
       // round off stray floats
-      quantityRoundedToLotSize = roundWithNumber(quantityRoundedToLotSize, 8);
+      quantityRoundedToLotSize = roundWithNumber(quantityRoundedToLotSize, 5);
+
+      console.log(quantityRoundedToLotSize);
     } else {
       quantityRoundedToLotSize = Math.round(
         Math.round(rawQuantity / parseInt(assetLotSize)) *
@@ -362,7 +365,7 @@ async function placeTrade(
         ordertype: 2,
         side: buyOrSell,
         price: Math.round(assetPrice * Math.pow(10, 8)),
-        quantity: quantityRoundedToLotSize * Math.pow(10, 8),
+        quantity: Math.round(quantityRoundedToLotSize * Math.pow(10, 8)),
         timeinforce: timeInForce
       };
 
@@ -400,6 +403,11 @@ async function placeTrade(
   }
 }
 
+// We don't have a full confirmation this is 1/2
+function dudConfirmationCallback(orderReceipt) {
+  console.log("1 of 2 confirmation callback. Dont display to UI");
+  console.log(orderReceipt);
+}
 export async function tradeOnBnbChain(
   trades,
   address,
@@ -451,7 +459,7 @@ export async function tradeOnBnbChain(
       marketDataWithLotSizes,
       false,
       walletConnector,
-      confirmationCallback
+      dudConfirmationCallback
     );
 
     let fromBnbTrade = [];

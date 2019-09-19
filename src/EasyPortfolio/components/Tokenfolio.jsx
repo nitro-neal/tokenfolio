@@ -186,6 +186,10 @@ class Tokenfolio extends Component {
       bnbAsset => bnbAsset.friendlyName === e.target.value
     );
 
+    if (element === null || element === undefined) {
+      return;
+    }
+
     element.inMyPortfolio = true;
     this.setState({ binanceAssets: this.state.binanceAssets });
   };
@@ -313,6 +317,26 @@ class Tokenfolio extends Component {
     let confs = this.state.confirmations;
 
     if (confimation.error === "lotSizeError") {
+      for (let i = 0; i < confs.length; i++) {
+        if (confs[i].complete === false) {
+          confs[i].complete = true;
+          confs[i].error = true;
+          confs[i].url = "Need Bigger Lot Size";
+          this.setState({
+            confirmations: confs
+          });
+          return;
+        }
+      }
+    }
+
+    if (
+      confimation.error !== undefined ||
+      confimation === undefined ||
+      confimation.result === undefined ||
+      confimation.result[0] === undefined
+    ) {
+      console.log(" catch all error ");
       for (let i = 0; i < confs.length; i++) {
         if (confs[i].complete === false) {
           confs[i].complete = true;

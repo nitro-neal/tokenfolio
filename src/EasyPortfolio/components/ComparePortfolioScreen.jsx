@@ -145,11 +145,13 @@ class ComparePortfolioScreen extends Component {
         <MDBRow className="h-100 align-items-center">
           <MDBCol md="4"></MDBCol>
           <MDBCol md="4">
-            <img
-              className="img-fluid"
-              alt="Tokenfolio logo"
-              src="/tflogo.png"
-            />
+            <a href="/">
+              <img
+                className="img-fluid"
+                alt="Tokenfolio logo"
+                src="/tflogo.png"
+              />
+            </a>
           </MDBCol>
           <MDBCol md="4"></MDBCol>
         </MDBRow>
@@ -159,7 +161,6 @@ class ComparePortfolioScreen extends Component {
           <MDBCol md="6">
             <p style={{ padding: "7px", textAlign: "center" }}>
               Your current allocation vs "{this.props.comparePortfolioName}"
-              tokenfolio
             </p>
           </MDBCol>
           <MDBCol md="3"></MDBCol>

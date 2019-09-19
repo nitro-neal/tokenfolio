@@ -8,7 +8,8 @@ import {
   MDBIcon,
   MDBPopover,
   MDBPopoverBody,
-  MDBPopoverHeader
+  MDBPopoverHeader,
+  MDBNavLink
 } from "mdbreact";
 
 import PieChart from "./PieChart";
@@ -16,6 +17,7 @@ import AssetSliders from "./AssetSliders";
 
 import SelectDropdown from "./SelectDropdown";
 import Footer from "./Footer";
+import Globals from "./Globals";
 
 const textAlignCenter = {
   textAlign: "center"
@@ -91,6 +93,14 @@ class RebalancePortfolioScreen extends Component {
               handleSelect={this.props.handleSelect}
               binanceAssets={this.props.binanceAssets}
             />
+          </MDBCol>
+        </MDBRow>
+
+        <MDBRow className="h-100 align-items-center">
+          <MDBCol>
+            <p style={Globals.centerWithBottomPadding}>
+              Or view other's <a href="/portfolios/">portfolios</a>
+            </p>
           </MDBCol>
         </MDBRow>
 
