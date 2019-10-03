@@ -523,6 +523,15 @@ class Tokenfolio extends Component {
 
     return (
       <MDBContainer className="h-100 custom-bg-ellipses">
+        {/*<MDBRow className="align-items-center float-right">
+          <MDBCol size="9"></MDBCol>
+          <MDBCol size="3">
+            <div>
+              <MDBBtn> Buy BBN </MDBBtn>
+            </div>
+          </MDBCol>
+        </MDBRow>
+    */}
         {/* Share Modal */}
         <ShareModal
           toggle={this.shareToggle}

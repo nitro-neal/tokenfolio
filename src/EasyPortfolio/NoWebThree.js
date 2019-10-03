@@ -13,6 +13,8 @@ import {
 } from "mdbreact";
 import AssetSlider from "./AssetSlider";
 import ShowPieChart from "./PieChart";
+// import Footer from "./components/Footer";
+import GLOBALS from "./components/Globals";
 
 class NoWebThree extends React.Component {
 
@@ -317,10 +319,77 @@ class NoWebThree extends React.Component {
                                         </div>
                                     </div>
                                 </div>
+                                
                             </div>
+
+                            
 
                         </MDBCol>
                     </MDBRow>
+
+                    <MDBRow className="h-100 align-items-center">
+                    <MDBCol style={GLOBALS.centerWithTopPadding}>
+                      <p>
+                        Powered by
+                        <a
+                          rel="noopener noreferrer"
+                          href="https://www.binance.org/"
+                          target="_blank"
+                        >
+                          {" "}
+                          Binance Chain
+                        </a> and 
+
+                        <a
+                        rel="noopener noreferrer"
+                        href="https://kyber.network/"
+                        target="_blank"
+                      >
+                        {" "}
+                        Kyber Network
+                        </a>
+                      </p>
+                    </MDBCol>
+                  </MDBRow>
+                    <MDBRow className="h-100 align-items-center">
+          <MDBCol style={GLOBALS.textAlignCenter}>
+            <a
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://twitter.com/tokenfolio"
+            >
+              <MDBIcon fab icon="twitter" />
+            </a>
+
+            <a
+              style={GLOBALS.paddingLeft}
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://www.youtube.com/watch?v=XdEE7sEng0k"
+            >
+              <MDBIcon fab icon="youtube" />
+            </a>
+
+            <a
+              style={GLOBALS.paddingLeft}
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://github.com/nitro-neal/tokenfolio"
+            >
+              <MDBIcon fab icon="github" />
+            </a>
+
+            <a
+              style={GLOBALS.paddingLeft}
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://medium.com/@tokenfolio"
+            >
+              <MDBIcon fab icon="medium" />
+            </a>
+
+          </MDBCol>
+        </MDBRow>
                 </MDBContainer>
             </MDBAnimation>
         )

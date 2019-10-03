@@ -11,6 +11,7 @@ import {
 
 import PieChart from "./PieChart";
 import WalletSelector from "./WalletSelector";
+import Footer from "./Footer";
 
 const textAlignCenter = {
   textAlign: "center"
@@ -71,24 +72,11 @@ class ConnectionScreen extends Component {
 
     let rightSide = (
       <MDBCol md="8">
-        <MDBAnimation type={animationTypeRight}>
-          {connectModule}
-          <MDBRow className="h-100 align-items-center">
-            <MDBCol style={centerWithTopPadding}>
-              <p>
-                Powered by
-                <a
-                  rel="noopener noreferrer"
-                  href="https://www.binance.org/"
-                  target="_blank"
-                >
-                  {" "}
-                  Binance Chain
-                </a>
-              </p>
-            </MDBCol>
-          </MDBRow>
-        </MDBAnimation>
+        <MDBAnimation type={animationTypeRight}>{connectModule}</MDBAnimation>
+        <Footer
+          clickSharePortfolio={this.props.clickSharePortfolio}
+          shareToggle={this.props.shareToggle}
+        />
       </MDBCol>
     );
     return (

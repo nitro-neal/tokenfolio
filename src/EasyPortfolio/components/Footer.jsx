@@ -74,6 +74,15 @@ class Footer extends Component {
 
             <a
               style={GLOBALS.paddingLeft}
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://medium.com/@tokenfolio"
+            >
+              <MDBIcon fab icon="medium" />
+            </a>
+
+            <a
+              style={GLOBALS.paddingLeft}
               href="#"
               onClick={this.props.shareToggle}
             >

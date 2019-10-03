@@ -51,6 +51,26 @@ class WalletSelector extends Component {
           <Tab eventKey="profile" title="Keystore File">
             <FileInput walletFileUploaded={this.props.walletFileUploaded} />
           </Tab>
+          {/*<Tab eventKey="buy" title="Buy BNB">
+            <script src="https://widget.changelly.com/affiliate.js"></script>{" "}
+            <iframe
+              title="buyBnb"
+              src="https://widget.changelly.com?currencies=bnb,btc,eth&from=usd&to=bnb&amount=50&address=&fiat=true&fixedTo=true&theme=aqua&merchant_id=f05eec06a2ce&payment_id=Trust Wallet"
+              width="100%"
+              height="600"
+              class="changelly"
+              scrolling="no"
+              onLoad="function ie(e){var t=e.target,n=t.parentNode,r=t.contentWindow,a=function(){return r.postMessage({width:n.offsetWidth},j.url)};window.addEventListener('resize',a),a()};ie.apply(this, arguments);"
+              style={{
+                minWidth: "100%",
+                width: "100px",
+                overflowY: "hidden",
+                border: "none"
+              }}
+            >
+              Can't load widget
+            </iframe>
+            </Tab>*/}
         </Tabs>
       </MDBContainer>
     );
