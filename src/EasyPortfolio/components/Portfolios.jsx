@@ -13,7 +13,8 @@ class Portfolios extends Component {
     oneDayPercentGainMap: null,
     sevenDayPercentGainMap: null,
     thirtyDayPercentGainMap: null,
-    userLastShared: []
+    userLastShared: [],
+    userBiggestGains: []
   };
 
   componentDidMount() {
@@ -84,7 +85,7 @@ class Portfolios extends Component {
       thirtyDayPercentGainMap.set(d.friendlyName, d.thirtyDayPercentChange);
     });
 
-    // get user portfolios
+    // get latest user portfolios
     this.props.db
       .collection("portfolios")
       .orderBy("dateShared", "desc")
@@ -115,6 +116,65 @@ class Portfolios extends Component {
         });
       });
 
+    // get highest gains user portfolios
+    this.props.db
+      .collection("portfolios")
+      .orderBy("dateShared", "desc")
+      .get()
+      .then(function(querySnapshot) {
+        let allUserAssets = [];
+        querySnapshot.forEach(function(doc) {
+          console.log("bigGains" + doc.id, " => ", doc.data());
+          let portfolioInfo = doc.data();
+
+          let userAssets = [];
+          for (let i = 0; i < portfolioInfo.assetsAndPercents.length; i++) {
+            console.log(portfolioInfo.assetsAndPercents[i].asset);
+            console.log(portfolioInfo.assetsAndPercents[i].percent);
+            userAssets.push(
+              that.generatePortfolioObject(
+                portfolioInfo.assetsAndPercents[i].asset,
+                Math.round(portfolioInfo.assetsAndPercents[i].percent)
+              )
+            );
+          }
+
+          userAssets.sort((a, b) =>
+            a.newPortfolioPercent > b.newPortfolioPercent ? -1 : 1
+          );
+
+          // that.setState({ userLastShared: userAssets });
+          allUserAssets.push(userAssets);
+        });
+
+        let largestIndex = -1;
+        let largestGains = -999999;
+        for (let i = 0; i < allUserAssets.length; i++) {
+          let averageSevenDayGains = 0;
+          for (let j = 0; j < allUserAssets[i].length; j++) {
+            console.log(allUserAssets[i][j].percentGainSevenDays);
+            averageSevenDayGains += parseFloat(
+              allUserAssets[i][j].percentGainSevenDays
+            );
+          }
+
+          averageSevenDayGains = averageSevenDayGains / allUserAssets[i].length;
+
+          if (averageSevenDayGains > largestGains) {
+            largestGains = averageSevenDayGains;
+            largestIndex = i;
+          }
+
+          console.log("average all user assets");
+          // console.log(allUserAssets[i].percentGainSevenDays);
+          console.log(averageSevenDayGains);
+        }
+
+        let largestGainUser = allUserAssets[largestIndex];
+
+        that.setState({ userBiggestGains: largestGainUser });
+      });
+
     this.setState({ historicData: historicData.data });
     this.setState({ baseAssetNameMap: baseAssetNameMap });
     this.setState({ symbolMap: symbolMap });
@@ -127,6 +187,10 @@ class Portfolios extends Component {
   getPortfolio = name => {
     if (name === "user7Days") {
       return this.state.userLastShared;
+    }
+
+    if (name === "user7DaysGains") {
+      return this.state.userBiggestGains;
     }
 
     if (name === "bnbHeavy") {
@@ -297,6 +361,12 @@ class Portfolios extends Component {
               title="User Shared Latest"
               lead="A user shared this portfoio recently. Share your portfolio to any social media platform to qualify for listing."
               assets={this.getPortfolio("user7Days")}
+            />
+
+            <PortfolioJumbotron
+              title="User Shared Biggest Gains"
+              lead="A user shared thier portfolio recently and had the biggest gains over the last 7 days"
+              assets={this.getPortfolio("user7DaysGains")}
             />
 
             <PortfolioJumbotron
