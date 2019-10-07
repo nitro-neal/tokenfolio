@@ -49,15 +49,22 @@ async function fetchPriceInfo() {
 
     if(globalTokenPriceInfo.ETH_BAT.rate_usd_now === 0) {
         console.log('price info down, getting backup')
-        
-        let cmcResult = await axios.get('https://api.coinmarketcap.com/v1/ticker/?limit=1000')
+    
+        let coinSymbols = ''
+        for (var key in globalTokenPriceInfo) {
+            console.log(key.split('_')[1])
+            coinSymbols += key.split('_')[1] + ","
+        }
 
-        for(let i = 0; i < cmcResult.data.length; i++) {
-            let cmcCoinObj = cmcResult.data[i];
-            let key = 'ETH_' + cmcCoinObj.symbol;
-            
-            if(globalTokenPriceInfo[key] !== undefined) {
-                globalTokenPriceInfo[key].rate_usd_now = cmcCoinObj.price_usd;
+        coinSymbols.substring(0,coinSymbols.length-1)
+
+        let ccKey = process.env.REACT_APP_CC_KEY
+        let cCompareResult = await axios.get('https://min-api.cryptocompare.com/data/pricemulti?fsyms=' + coinSymbols + '&tsyms=USD&api_key=' + ccKey )
+
+        for (var key in cCompareResult.data) {
+            let kyberKey = 'ETH_' + key;
+            if(globalTokenPriceInfo[kyberKey] !== undefined) {
+                globalTokenPriceInfo[kyberKey].rate_usd_now = cCompareResult.data[key].USD;
                 
             }
         }
