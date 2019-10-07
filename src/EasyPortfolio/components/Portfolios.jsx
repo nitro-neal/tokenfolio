@@ -3,6 +3,8 @@ import axios from "axios";
 import PortfolioJumbotron from "./PortfolioJumbotron";
 import { MDBAnimation, MDBRow, MDBCol } from "mdbreact";
 
+let that;
+
 class Portfolios extends Component {
   state = {
     historicData: {},
@@ -10,10 +12,12 @@ class Portfolios extends Component {
     baseAssetNameMap: null,
     oneDayPercentGainMap: null,
     sevenDayPercentGainMap: null,
-    thirtyDayPercentGainMap: null
+    thirtyDayPercentGainMap: null,
+    userLastShared: []
   };
 
   componentDidMount() {
+    that = this;
     this.getPortfolios();
   }
 
@@ -24,9 +28,21 @@ class Portfolios extends Component {
     let sevenDayPercentGainMap = new Map();
     let thirtyDayPercentGainMap = new Map();
 
+    const sleep = milliseconds => {
+      return new Promise(resolve => setTimeout(resolve, milliseconds));
+    };
+
     let historicData = await axios.get(
       "https://binance-chain-price-metrics-yrevdxsg4q-uc.a.run.app/api/performance"
     );
+
+    if (historicData.data.length === 0) {
+      console.log("historicData COLD START, TRYING AGAIN IN 3 SECONDS");
+      await sleep(3000);
+      historicData = await axios.get(
+        "https://binance-chain-price-metrics-yrevdxsg4q-uc.a.run.app/api/performance"
+      );
+    }
 
     console.log("historicData");
     console.log(historicData);
@@ -68,6 +84,37 @@ class Portfolios extends Component {
       thirtyDayPercentGainMap.set(d.friendlyName, d.thirtyDayPercentChange);
     });
 
+    // get user portfolios
+    this.props.db
+      .collection("portfolios")
+      .orderBy("dateShared", "desc")
+      .limit(1)
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          console.log(doc.id, " => ", doc.data());
+          let portfolioInfo = doc.data();
+
+          let userAssets = [];
+          for (let i = 0; i < portfolioInfo.assetsAndPercents.length; i++) {
+            console.log(portfolioInfo.assetsAndPercents[i].asset);
+            console.log(portfolioInfo.assetsAndPercents[i].percent);
+            userAssets.push(
+              that.generatePortfolioObject(
+                portfolioInfo.assetsAndPercents[i].asset,
+                Math.round(portfolioInfo.assetsAndPercents[i].percent)
+              )
+            );
+          }
+
+          userAssets.sort((a, b) =>
+            a.newPortfolioPercent > b.newPortfolioPercent ? -1 : 1
+          );
+
+          that.setState({ userLastShared: userAssets });
+        });
+      });
+
     this.setState({ historicData: historicData.data });
     this.setState({ baseAssetNameMap: baseAssetNameMap });
     this.setState({ symbolMap: symbolMap });
@@ -78,6 +125,10 @@ class Portfolios extends Component {
   };
 
   getPortfolio = name => {
+    if (name === "user7Days") {
+      return this.state.userLastShared;
+    }
+
     if (name === "bnbHeavy") {
       return [
         this.generatePortfolioObject("BNB", 80),
@@ -156,9 +207,6 @@ class Portfolios extends Component {
           parseFloat(b.thirtyDayMarketVolume)
       );
       fourteenDayVolume.reverse();
-      // fourteenDayVolume = fourteenDayVolume.filter(
-      //   a => a.thirtyDayMarketVolume !== -999
-      // );
       return fourteenDayVolume;
     }
 
@@ -169,7 +217,6 @@ class Portfolios extends Component {
           parseFloat(b.thirtyDayNumberOfTrades)
       );
       numOfTrades.reverse();
-      // numOfTrades = numOfTrades.filter(a => a.thirtyDayNumberOfTrades !== -999);
       return numOfTrades;
     }
 
@@ -245,6 +292,12 @@ class Portfolios extends Component {
               </MDBCol>
               <MDBCol size="4"></MDBCol>
             </MDBRow>
+
+            <PortfolioJumbotron
+              title="User Shared Latest"
+              lead="A user shared this portfoio recently. Share your portfolio to any social media platform to qualify for listing."
+              assets={this.getPortfolio("user7Days")}
+            />
 
             <PortfolioJumbotron
               title="BNB Heavy"

@@ -13,6 +13,8 @@ import {
 import PieChart from "./PieChart";
 import Globals from "./Globals";
 
+import mobile from "is-mobile";
+
 const imageStyle = { width: "50px", paddingRight: "10px" };
 
 class PortfolioJumbotron extends Component {
@@ -21,6 +23,7 @@ class PortfolioJumbotron extends Component {
   render() {
     let keyTitleString = this.props.title.replace(/\s+/g, "_").toLowerCase();
     let link = "/portfolio/" + keyTitleString;
+    let isMobile = mobile();
 
     let portfolioRows = [];
 
@@ -140,11 +143,16 @@ class PortfolioJumbotron extends Component {
               <hr className="my-2" />
 
               <MDBRow className="h-100 align-items-center">
-                <MDBCol size={"4"}>
-                  <PieChart assets={this.props.assets} />
-                </MDBCol>
-
-                <MDBCol size={"8"}>{portfolioRows}</MDBCol>
+                {isMobile === true ? (
+                  <MDBCol size={"12"}>{portfolioRows}</MDBCol>
+                ) : (
+                  <>
+                    <MDBCol size={"4"}>
+                      <PieChart assets={this.props.assets} />
+                    </MDBCol>
+                    <MDBCol size={"8"}>{portfolioRows}</MDBCol>
+                  </>
+                )}
               </MDBRow>
 
               <p className="lead">

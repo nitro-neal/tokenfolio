@@ -26,6 +26,7 @@ import ConnectionScreen from "./ConnectionScreen";
 import RebalancePortfolioScreen from "./RebalancePortfolioScreen";
 import ComparePortfolioScreen from "./ComparePortfolioScreen";
 import ShareModal from "./ShareModal";
+import { getCurrentAssets } from "../Helpers";
 
 const INITIAL_STATE = {
   file: null,
@@ -46,6 +47,8 @@ const INITIAL_STATE = {
   shareModal: false,
   shareLink: "https://binance.tokenfolio.cc/"
 };
+
+let shared = false;
 
 class Tokenfolio extends Component {
   state = { ...INITIAL_STATE };
@@ -158,6 +161,34 @@ class Tokenfolio extends Component {
       this.props.development,
       this.state.binanceAssets
     );
+
+    if (shared === false) {
+      let assetsAndPercents = [];
+
+      this.state.binanceAssets.forEach(asset => {
+        if (asset.newPortfolioPercent > 0) {
+          let assetObj = {
+            asset: asset.friendlyName,
+            percent: asset.newPortfolioPercent
+          };
+          assetsAndPercents.push(assetObj);
+        }
+      });
+
+      const d = new Date();
+      const curTime = d.getTime();
+      // send to firebase
+      let docRef = this.props.db
+        .collection("portfolios")
+        .doc(this.state.binanceAddress + "-" + curTime);
+      let setAda = docRef.set({
+        shareLink: shareLink,
+        dateShared: curTime,
+        assetsAndPercents: assetsAndPercents
+      });
+      shared = true;
+    }
+
     this.setState({
       shareLink: shareLink
     });
